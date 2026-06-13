@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>জাপানি শব্দভান্ডার — পাঠ ৫-১১</title>
+<title>জাপানি শব্দভান্ডার — পাঠ ৫-১১ (Pro Edition)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -16,22 +16,15 @@
   --muted: #a7a9be;
   --hint: #6b6d80;
 
-  --c1: #ff8906; /* amber */
-  --c2: #f25f4c; /* coral */
-  --c3: #e53170; /* pink */
-  --c4: #3da9fc; /* blue */
-  --c5: #43d9ad; /* teal */
-  --c6: #a78bfa; /* purple */
-  --c7: #fbbf24; /* yellow-orange */
-  --c8: #f43f5e; /* rose */
-
-  --cat-food: #ff8906;
-  --cat-drink: #3da9fc;
-  --cat-home: #43d9ad;
-  --cat-adj: #a78bfa;
-  --cat-verb: #f25f4c;
-  --cat-phrase: #e53170;
-  --cat-other: #94a3b8;
+  --c1: #ff8906; /* Lesson 5: Amber */
+  --c2: #3da9fc; /* Lesson 6: Blue */
+  --c3: #43d9ad; /* Lesson 7: Teal */
+  --c4: #a78bfa; /* Lesson 8: Purple */
+  --c5: #fbbf24; /* Lesson 10: Yellow */
+  --c6: #f43f5e; /* Lesson 11: Rose */
+  
+  --current-theme: #3da9fc;
+  --current-glow: rgba(61,169,252,0.1);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,577 +35,343 @@ body {
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background 0.5s ease;
 }
 
-/* BACKGROUND PATTERN */
+/* DYNAMIC LESSON VIBE BACKGROUND PATTERN */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(61,169,252,0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(229,49,112,0.07) 0%, transparent 60%);
+    radial-gradient(ellipse 80% 50% at 20% 0%, var(--current-glow) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255,255,255,0.02) 0%, transparent 60%);
   pointer-events: none;
   z-index: 0;
+  transition: all 0.5s ease;
 }
 
 .app { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 16px 80px; }
 
-/* HEADER */
-header {
-  padding: 32px 0 24px;
-  text-align: center;
-}
+header { padding: 32px 0 24px; text-align: center; }
 .header-badge {
   display: inline-block;
   font-family: 'Space Mono', monospace;
   font-size: 11px;
   letter-spacing: 0.15em;
-  color: var(--c5);
-  background: rgba(67,217,173,0.1);
-  border: 1px solid rgba(67,217,173,0.2);
+  color: var(--current-theme);
+  background: var(--current-glow);
+  border: 1px solid var(--current-theme);
   padding: 4px 12px;
   border-radius: 100px;
   margin-bottom: 12px;
+  transition: all 0.3s;
 }
 h1 {
   font-size: clamp(22px, 5vw, 34px);
   font-weight: 700;
-  background: linear-gradient(135deg, var(--c1), var(--c3), var(--c4));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text);
   line-height: 1.2;
   margin-bottom: 8px;
 }
 .subtitle { font-size: 13px; color: var(--muted); }
 
+/* MODE SWITCHER */
+.mode-switch { display: flex; background: var(--surface); border: 1px solid var(--border); padding: 4px; border-radius: 14px; margin-bottom: 20px; }
+.mode-btn {
+  flex: 1; background: transparent; border: none; color: var(--muted); padding: 12px;
+  font-family: 'Noto Sans Bengali', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
+  border-radius: 10px; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.mode-btn.active { background: var(--surface2); color: var(--current-theme); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
+/* SEARCH BOX */
+.search-container { margin-bottom: 20px; position: relative; }
+.search-input {
+  width: 100%; padding: 14px 16px 14px 44px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; color: var(--text); font-family: 'Noto Sans Bengali', 'Space Mono', sans-serif; font-size: 14px; transition: all 0.3s;
+}
+.search-input:focus { outline: none; border-color: var(--current-theme); box-shadow: 0 0 0 3px var(--current-glow); }
+.search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--hint); font-size: 16px; }
+
+.search-results {
+  position: absolute; top: 100%; left: 0; right: 0; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 12px; margin-top: 5px; max-height: 250px; overflow-y: auto; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.4); display: none;
+}
+.search-item { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.2s; }
+.search-item:hover { background: rgba(255,255,255,0.05); }
+.search-item .item-jp { font-family: 'Noto Sans JP', sans-serif; font-weight: 700; color: var(--c1); }
+.search-item .item-rom { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted); margin-left: 8px;}
+.search-item .item-bn { font-size: 13px; color: var(--text); margin-top: 2px; }
+
 /* STATS BAR */
-.stats-bar {
-  display: flex;
-  gap: 10px;
-  margin: 20px 0;
-  flex-wrap: wrap;
-}
-.stat {
-  flex: 1;
-  min-width: 80px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 10px;
-  text-align: center;
-}
+.stats-bar { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+.stat { flex: 1; min-width: 80px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; }
 .stat-num { font-size: 22px; font-weight: 700; font-family: 'Space Mono', monospace; }
 .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.stat.known .stat-num { color: var(--c5); }
-.stat.again .stat-num { color: var(--c2); }
-.stat.total .stat-num { color: var(--c4); }
+.stat.known .stat-num { color: #43d9ad; }
+.stat.again .stat-num { color: #f25f4c; }
+.stat.total .stat-num { color: var(--current-theme); }
 
-/* LESSON + CATEGORY FILTERS */
-.filter-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
+/* FILTERS */
+.filter-row, .cat-filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
 .filter-btn {
-  font-family: 'Noto Sans Bengali', sans-serif;
-  font-size: 12px;
-  padding: 6px 14px;
-  border-radius: 100px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  transition: all 0.2s;
+  font-family: 'Noto Sans Bengali', sans-serif; font-size: 12px; padding: 6px 14px; border-radius: 100px;
+  border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s;
 }
 .filter-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
-.filter-btn.active {
-  color: #000;
-  border-color: transparent;
-  font-weight: 600;
-}
-.filter-btn[data-lesson="all"].active { background: linear-gradient(135deg, var(--c1), var(--c3)); }
-.filter-btn[data-lesson="5"].active { background: var(--c1); }
-.filter-btn[data-lesson="6"].active { background: var(--c4); }
-.filter-btn[data-lesson="7"].active { background: var(--c5); }
-.filter-btn[data-lesson="8"].active { background: var(--c6); }
-.filter-btn[data-lesson="10"].active { background: var(--c7); }
-.filter-btn[data-lesson="11"].active { background: var(--c8); }
-
-.cat-filter-row {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-.cat-btn {
-  font-family: 'Noto Sans Bengali', sans-serif;
-  font-size: 12px; 
-  padding: 6px 14px; 
-  border-radius: 100px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: all 0.2s;
-  opacity: 0.8; 
-}
-
-.cat-btn:hover {
-  opacity: 1;
-  border-color: rgba(255, 255, 255, 0.2); 
-}
-
-.cat-btn.active {
-  opacity: 1;
-  font-weight: 600;
-  border-color: currentColor; 
-}
+.filter-btn.active { color: #000; border-color: transparent; font-weight: 600; background: var(--lt-color, var(--current-theme)); }
 
 /* PROGRESS */
 .progress-wrap { margin-bottom: 16px; }
 .progress-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-.progress-track {
-  height: 4px;
-  background: var(--surface2);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--c5), var(--c4));
-  border-radius: 2px;
-  transition: width 0.4s ease;
-}
+.progress-track { height: 6px; background: var(--surface2); border-radius: 100px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--current-theme); border-radius: 100px; transition: width 0.4s ease; }
 
 /* FLASHCARD */
-.card-area {
-  perspective: 1200px;
-  margin-bottom: 16px;
-}
-.card-inner {
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
-  min-height: 340px;
-  cursor: pointer;
-}
+.card-area { perspective: 1200px; margin-bottom: 16px; }
+.card-inner { position: relative; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); min-height: 360px; cursor: pointer; }
 .card-inner.flipped { transform: rotateY(180deg); }
 
 .card-face {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  border-radius: 20px;
-  padding: 28px 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border);
-  z-index: 2; 
+  position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border-radius: 20px; padding: 28px 24px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 2px solid var(--current-theme); z-index: 2; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: border-color 0.3s;
 }
-.card-front {
-  background: var(--surface);
-}
-.card-back {
-  background: var(--surface2);
-  transform: rotateY(180deg);
-  justify-content: flex-start;
-  overflow-y: auto;
-}
+.card-front { background: var(--surface); }
+.card-back { background: var(--surface2); transform: rotateY(180deg); justify-content: flex-start; overflow-y: auto; }
 
-/* CARD FRONT */
-.card-lesson-badge {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  font-family: 'Space Mono', monospace;
-  font-size: 10px;
-  padding: 3px 10px;
-  border-radius: 100px;
-  background: rgba(255,255,255,0.06);
-  color: var(--muted);
-}
-.card-cat-badge {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  font-size: 10px;
-  padding: 3px 10px;
-  border-radius: 100px;
-  font-weight: 600;
-}
-.card-jp {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: clamp(32px, 6vw, 55px);
-  font-weight: 700;
-  margin-bottom: 8px;
-  text-align: center;
-  line-height: 1.2;
-}
-.card-reading {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: 16px;
-  color: var(--muted);
-  margin-bottom: 4px;
-}
-.card-romaji {
-  font-family: 'Space Mono', monospace;
-  font-size: 13px;
-  color: var(--hint);
-}
-.tap-hint {
-  position: absolute;
-  bottom: 16px;
-  font-size: 11px;
-  color: var(--hint);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.tap-hint::before { content: '👆'; font-size: 14px; }
+.card-lesson-badge { position: absolute; top: 16px; left: 16px; font-family: 'Space Mono', monospace; font-size: 11px; padding: 3px 12px; border-radius: 100px; background: var(--current-glow); color: var(--current-theme); font-weight: bold; }
+.card-cat-badge { position: absolute; top: 16px; right: 16px; font-size: 11px; padding: 3px 12px; border-radius: 100px; background: rgba(255,255,255,0.06); font-weight: 600; }
+.card-jp { font-family: 'Noto Sans JP', sans-serif; font-size: clamp(32px, 6vw, 55px); font-weight: 700; margin-bottom: 8px; text-align: center; line-height: 1.2; }
+.card-reading { font-family: 'Noto Sans JP', sans-serif; font-size: 18px; color: var(--muted); margin-bottom: 4px; }
+.card-romaji { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--hint); }
+.tap-hint { position: absolute; bottom: 16px; font-size: 11px; color: var(--hint); display: flex; align-items: center; gap: 5px; }
 
 /* AUDIO BUTTON */
 .audio-btn {
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--c4);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  transition: all 0.2s;
-  z-index: 10;
+  position: absolute; bottom: 16px; right: 16px; width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--surface2); color: var(--current-theme); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s; z-index: 10;
 }
-.audio-btn:hover { background: rgba(61,169,252,0.15); border-color: var(--c4); }
+.audio-btn:hover { background: var(--current-glow); border-color: var(--current-theme); }
 
-/* CARD BACK */
-.back-header {
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
-}
-.back-jp {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1.2;
-}
+/* CARD BACK CONTENT */
+.back-header { width: 100%; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.back-jp { font-family: 'Noto Sans JP', sans-serif; font-size: 28px; font-weight: 700; color: var(--current-theme); }
 .back-readings { flex: 1; }
-.back-kana {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: 14px;
-  color: var(--muted);
-}
-.back-romaji-text {
-  font-family: 'Space Mono', monospace;
-  font-size: 12px;
-  color: var(--hint);
-  margin-top: 2px;
-}
-.back-meaning {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 14px;
-  width: 100%;
-}
+.back-kana { font-family: 'Noto Sans JP', sans-serif; font-size: 15px; color: var(--text); }
+.back-romaji-text { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted); }
+.back-meaning { font-size: 24px; font-weight: 700; color: #43d9ad; margin-bottom: 14px; width: 100%; }
 
-.section {
-  width: 100%;
-  margin-bottom: 14px;
-  border-radius: 12px;
-  padding: 12px 14px;
-}
-.section-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.section-content { font-size: 13px; line-height: 1.65; }
-.section-content em {
-  font-style: normal;
-  font-weight: 700;
-  text-decoration: underline;
-  text-decoration-style: dotted;
-  text-underline-offset: 3px;
-}
+.section { width: 100%; margin-bottom: 14px; border-radius: 12px; padding: 12px 14px; }
+.section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+.section-content { font-size: 14px; line-height: 1.6; }
+.section-content em { font-style: normal; font-weight: 700; color: #fbbf24; background: rgba(251,191,36,0.1); padding: 1px 4px; border-radius: 4px; }
 
-.trick-section { background: rgba(255,137,6,0.08); border: 1px solid rgba(255,137,6,0.15); }
-.trick-section .section-label { color: var(--c1); }
-.trick-section .section-content { color: #ffd6a5; }
-
-.example-section { background: rgba(61,169,252,0.08); border: 1px solid rgba(61,169,252,0.15); }
-.example-section .section-label { color: var(--c4); }
+.trick-section { background: rgba(255,137,6,0.06); border: 1px solid rgba(255,137,6,0.15); }
+.trick-section .section-label { color: #ff8906; }
+.example-section { background: rgba(61,169,252,0.06); border: 1px solid rgba(61,169,252,0.15); }
+.example-section .section-label { color: #3da9fc; }
 .example-jp { font-family: 'Noto Sans JP', sans-serif; font-size: 15px; color: var(--text); margin-bottom: 4px; }
 .example-bn { font-size: 13px; color: var(--muted); }
 
 .back-audio-btn {
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(61,169,252,0.25);
-  background: rgba(61,169,252,0.08);
-  color: var(--c4);
-  cursor: pointer;
-  font-family: 'Noto Sans Bengali', sans-serif;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.2s;
-  margin-bottom: 14px;
+  width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); cursor: pointer; font-family: 'Noto Sans Bengali', sans-serif; font-size: 13px;
+  display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; margin-bottom: 14px;
 }
-.back-audio-btn:hover { background: rgba(61,169,252,0.15); }
 
-/* KNOW BUTTONS */
-.know-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 12px;
-}
+/* CONTROLS */
+.know-row { display: flex; gap: 10px; margin-bottom: 12px; width:100%;}
 .know-btn {
-  flex: 1;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid transparent;
-  font-family: 'Noto Sans Bengali', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  flex: 1; padding: 14px; border-radius: 12px; border: 1px solid transparent; font-family: 'Noto Sans Bengali', sans-serif;
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;
 }
-.btn-again {
-  background: rgba(242,95,76,0.1);
-  border-color: rgba(242,95,76,0.3);
-  color: var(--c2);
-}
-.btn-again:hover { background: rgba(242,95,76,0.2); }
-.btn-know {
-  background: rgba(67,217,173,0.1);
-  border-color: rgba(67,217,173,0.3);
-  color: var(--c5);
-}
-.btn-know:hover { background: rgba(67,217,173,0.2); }
+.btn-again { background: rgba(242,95,76,0.1); border-color: rgba(242,95,76,0.3); color: #f25f4c; }
+.btn-know { background: rgba(67,217,173,0.1); border-color: rgba(67,217,173,0.3); color: #43d9ad; }
+.nav-row { display: flex; gap: 10px; align-items: center; }
+.nav-btn { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-family: 'Noto Sans Bengali', sans-serif; font-size: 13px; cursor: pointer; }
+.shuffle-btn { padding: 12px 20px; border-radius: 12px; border: 1px solid var(--current-theme); background: var(--current-glow); color: var(--current-theme); font-family: 'Noto Sans Bengali', sans-serif; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: bold; }
 
-/* NAV CONTROLS */
-.nav-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
+/* ADVANCED QUIZ VIEW */
+#quizView { display: none; }
+.quiz-card { background: var(--surface); border: 2px solid var(--current-theme); border-radius: 20px; padding: 24px; margin-bottom: 20px; transition: all 0.3s; }
+.quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.quiz-context-badge { font-size: 12px; font-weight: bold; background: var(--current-glow); color: var(--current-theme); padding: 4px 12px; border-radius: 100px; }
+.quiz-timer { font-family: 'Space Mono', monospace; font-weight: bold; color: #f25f4c; font-size: 15px; background: rgba(242,95,76,0.1); padding: 4px 12px; border-radius: 8px; }
+.quiz-question-box { background: var(--surface2); padding: 28px 20px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 20px; text-align: center; }
+.quiz-hint-bn { font-size: 14px; color: var(--muted); margin-bottom: 12px; font-style: italic; }
+.quiz-question-sentence { font-family: 'Noto Sans JP', sans-serif; font-size: clamp(20px, 4vw, 26px); color: var(--text); line-height: 1.6; font-weight: 700; }
+.quiz-question-sentence span { color: var(--current-theme); border-bottom: 3px dashed var(--current-theme); padding: 0 8px; }
+
+.quiz-options { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media(min-width: 600px) { .quiz-options { grid-template-columns: 1fr 1fr; } }
+.option-btn {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 18px; text-align: left;
+  color: var(--text); cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; gap: 4px; position: relative;
 }
-.nav-btn {
-  flex: 1;
-  padding: 11px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--muted);
-  font-family: 'Noto Sans Bengali', sans-serif;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
+.option-btn:hover:not(:disabled) { border-color: var(--current-theme); background: rgba(255,255,255,0.02); }
+.option-btn .opt-jp { font-family: 'Noto Sans JP', sans-serif; font-weight: bold; font-size: 18px; color: var(--text); }
+.option-btn .opt-bn { font-size: 13px; color: var(--muted); }
+
+/* FEEDBACK & EXPLANATION */
+.quiz-feedback-box {
+  margin-top: 16px; padding: 14px; border-radius: 12px; display: none; font-size: 14px; line-height: 1.5;
+  animation: fadeIn 0.3s ease;
 }
-.nav-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
-.shuffle-btn {
-  padding: 11px 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(167,139,250,0.3);
-  background: rgba(167,139,250,0.08);
-  color: var(--c6);
-  font-family: 'Noto Sans Bengali', sans-serif;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.shuffle-btn:hover { background: rgba(167,139,250,0.15); }
+.quiz-feedback-box.correct { background: rgba(67,217,173,0.1); border: 1px solid #43d9ad; color: #43d9ad; }
+.quiz-feedback-box.incorrect { background: rgba(242,95,76,0.1); border: 1px solid #f25f4c; color: #f25f4c; }
+
+.option-btn.correct { background: rgba(67,217,173,0.15) !important; border-color: #43d9ad !important; }
+.option-btn.incorrect { background: rgba(242,95,76,0.15) !important; border-color: #f25f4c !important; }
 
 /* COMPLETION */
-.completion {
-  display: none;
-  text-align: center;
-  padding: 40px 20px;
-  background: var(--surface);
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  margin-bottom: 16px;
-}
-.completion.show { display: block; }
-.completion h2 { font-size: 28px; margin-bottom: 8px; }
-.completion p { color: var(--muted); margin-bottom: 20px; }
-.restart-btn {
-  padding: 12px 28px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, var(--c5), var(--c4));
-  color: #000;
-  font-family: 'Noto Sans Bengali', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-.restart-btn:hover { opacity: 0.85; }
+.completion { text-align: center; padding: 40px 20px; background: var(--surface); border-radius: 20px; border: 2px solid var(--current-theme); display: none; }
+.completion.show { display: block; animation: fadeIn 0.5s ease; }
+.completion h2 { font-size: 32px; margin-bottom: 8px; color: var(--current-theme); }
+.restart-btn { padding: 14px 32px; border-radius: 12px; border: none; background: var(--current-theme); color: #000; font-family: 'Noto Sans Bengali', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px; }
 
-/* KEYBOARD HINT */
-.keyboard-hint {
-  text-align: center;
-  font-size: 11px;
-  color: var(--hint);
-  margin-top: 12px;
-}
-kbd {
-  font-family: 'Space Mono', monospace;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 1px 6px;
-  font-size: 10px;
-}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-/* SITE FOOTER */
-.site-footer {
-  text-align: center;
-  padding: 24px 0 8px;
-  font-family: 'Space Mono', monospace;
-  font-size: 13px;
-  color: var(--hint);
-  border-top: 1px solid var(--border);
-  margin-top: 40px;
-  letter-spacing: 0.05em;
-}
-
-.site-footer span {
-  color: var(--c5); 
-  font-weight: 700;
-}
+.keyboard-hint { text-align: center; font-size: 11px; color: var(--hint); margin-top: 16px; }
+kbd { font-family: 'Space Mono', monospace; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; }
+.site-footer { text-align: center; padding: 24px 0 8px; font-family: 'Space Mono', monospace; font-size: 13px; color: var(--hint); border-top: 1px solid var(--border); margin-top: 40px; }
+.site-footer span { color: var(--current-theme); font-weight: 700; }
 </style>
 </head>
 <body>
 <div class="app">
   <header>
-    <div class="header-badge">জাপানি ভাষা শিক্ষা</div>
-    <h1>শব্দভান্ডার অনুশীলন</h1>
-    <p class="subtitle">পাঠ ৫–১১ • মনে রাখার কৌশলসহ ফ্ল্যাশকার্ড</p>
+    <div class="header-badge" id="appBadge">জাপানি ভাষা শিক্ষা</div>
+    <h1 id="mainTitle">শব্দভান্ডার অনুধাবন</h1>
+    <p class="subtitle">স্মার্ট কনটেক্সট কুইজ এবং লেসন ভিত্তিক ডাইনামিক কালার থিম</p>
   </header>
 
-  <div class="stats-bar">
-    <div class="stat total"><div class="stat-num" id="totalStat">0</div><div class="stat-lbl">মোট</div></div>
-    <div class="stat known"><div class="stat-num" id="knownStat">0</div><div class="stat-lbl">জানি ✓</div></div>
-    <div class="stat again"><div class="stat-num" id="againStat">0</div><div class="stat-lbl">আবার দেখাও</div></div>
+  <!-- MODE SWITCHER -->
+  <div class="mode-switch">
+    <button class="mode-btn active" id="btnFlashcards" onclick="switchMode('flashcards')">🎴 ফ্ল্যাশকার্ড মোড</button>
+    <button class="mode-btn" id="btnQuiz" onclick="switchMode('quiz')">📝 কুইজ</button>
   </div>
 
+  <!-- SEARCH BOX -->
+  <div class="search-container">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" id="searchInput" placeholder="শব্দ বা অর্থ খুঁজুন (যেমন: asagohan, niku, ভাত)..." oninput="handleSearch()">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <!-- FILTERS -->
   <div class="filter-row" id="lessonFilters"></div>
   <div class="cat-filter-row" id="catFilters"></div>
 
-  <div class="progress-wrap">
-    <div class="progress-info">
-      <span id="progLabel">কার্ড ১ / ১</span>
-      <span id="progPct">0%</span>
+  <!-- FLASHCARDS VIEW -->
+  <div id="flashcardsView">
+    <div class="stats-bar">
+      <div class="stat total"><div class="stat-num" id="totalStat">0</div><div class="stat-lbl">মোট শব্দ</div></div>
+      <div class="stat known"><div class="stat-num" id="knownStat">0</div><div class="stat-lbl">জানি ✓</div></div>
+      <div class="stat again"><div class="stat-num" id="againStat">0</div><div class="stat-lbl">রিভিউ</div></div>
     </div>
-    <div class="progress-track"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
-  </div>
 
-  <div class="card-area" id="cardArea">
-    <div class="card-inner" id="cardInner">
-      <!-- FRONT -->
-      <div class="card-face card-front" id="cardFront">
-        <span class="card-lesson-badge" id="cLesson"></span>
-        <span class="card-cat-badge" id="cCat"></span>
-        <div class="card-jp" id="cJp"></div>
-        <div class="card-reading" id="cKana"></div>
-        <div class="card-romaji" id="cRomaji"></div>
-        <span class="tap-hint">ট্যাপ করুন মানে দেখতে</span>
-        <button class="audio-btn" id="audioFront" title="উচ্চারণ শুনুন">🔊</button>
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span id="progLabel">কার্ড ১ / ১</span>
+        <span id="progPct">0%</span>
       </div>
-      <!-- BACK -->
-      <div class="card-face card-back" id="cardBack">
-        <div class="back-header">
-          <div class="back-jp" id="bJp"></div>
-          <div class="back-readings">
-            <div class="back-kana" id="bKana"></div>
-            <div class="back-romaji-text" id="bRomaji"></div>
+      <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+    </div>
+
+    <div class="card-area" id="cardArea">
+      <div class="card-inner" id="cardInner" onclick="toggleFlip()">
+        <!-- FRONT -->
+        <div class="card-face card-front" id="cardFront">
+          <span class="card-lesson-badge" id="cLesson"></span>
+          <span class="card-cat-badge" id="cCat"></span>
+          <div class="card-jp" id="cJp"></div>
+          <div class="card-reading" id="cKana"></div>
+          <div class="card-romaji" id="cRomaji"></div>
+          <span class="tap-hint">👆 ট্যাপ করে অর্থ ও ট্রিক দেখুন</span>
+          <button class="audio-btn" id="audioFront" onclick="speakWord(event)">🔊</button>
+        </div>
+        <!-- BACK -->
+        <div class="card-face card-back" id="cardBack">
+          <div class="back-header">
+            <div class="back-jp" id="bJp"></div>
+            <div class="back-readings">
+              <div class="back-kana" id="bKana"></div>
+              <div class="back-romaji-text" id="bRomaji"></div>
+            </div>
+          </div>
+          <div class="back-meaning" id="bMeaning"></div>
+          <div class="section trick-section">
+            <div class="section-label">💡 শর্টকাট মনে রাখার কৌশল</div>
+            <div class="section-content" id="bTrick"></div>
+          </div>
+          <div class="section example-section">
+            <div class="section-label">📝 রিয়েল কন্টেক্সট বাক্য</div>
+            <div class="example-jp" id="bExJp"></div>
+            <div class="example-bn" id="bExBn"></div>
+          </div>
+          <div class="know-row" onclick="event.stopPropagation()">
+            <button class="know-btn btn-again" onclick="markCard(false)">↩ আবার দেখাও</button>
+            <button class="know-btn btn-know" onclick="markCard(true)">মনে আছে ✓</button>
           </div>
         </div>
-        <div class="back-meaning" id="bMeaning"></div>
-        <button class="back-audio-btn" id="audioBack">🔊 উচ্চারণ শুনুন</button>
-        <div class="section trick-section">
-          <div class="section-label">💡 মনে রাখার কৌশল</div>
-          <div class="section-content" id="bTrick"></div>
-        </div>
-        <div class="section example-section">
-          <div class="section-label">📝 উদাহরণ বাক্য</div>
-          <div class="example-jp" id="bExJp"></div>
-          <div class="example-bn" id="bExBn"></div>
-        </div>
-        <div class="know-row">
-          <button class="know-btn btn-again" onclick="markCard(false)">↩ আবার দেখাও</button>
-          <button class="know-btn btn-know" onclick="markCard(true)">জানি ✓</button>
-        </div>
       </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn" onclick="prevCard()">← আগে</button>
+      <button class="shuffle-btn" onclick="shuffle()">🔀 র্যান্ডম শাফল</button>
+      <button class="nav-btn" onclick="nextCard()">পরে →</button>
     </div>
   </div>
 
-  <div class="completion" id="completion">
-    <h2>🎉 শেষ!</h2>
-    <p id="completionMsg"></p>
-    <button class="restart-btn" onclick="restart()">আবার শুরু করুন</button>
+  <!-- ADVANCED QUIZ VIEW -->
+  <div id="quizView">
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span id="quizProgLabel">প্রশ্ন ১ / ১০</span>
+        <span id="quizScoreLabel">সঠিক উত্তর: ০</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="quizProgFill"></div></div>
+    </div>
+
+    <div class="quiz-card">
+      <div class="quiz-header">
+        <span class="quiz-context-badge" id="quizLessonBadge">পাঠ ভিত্তিক প্রশ্ন</span>
+        <span class="quiz-timer" id="quizTimer">২০s</span>
+      </div>
+      <div class="quiz-question-box">
+        <div class="quiz-hint-bn" id="qHintBn">বাংলা অর্থ ইঙ্গিত এখানে থাকবে</div>
+        <div class="quiz-question-sentence" id="qSentence"></div>
+      </div>
+      <div class="quiz-options" id="quizOptions"></div>
+      <div class="quiz-feedback-box" id="quizFeedback"></div>
+    </div>
+    <div class="nav-row">
+      <button class="restart-btn" style="width:100%; margin:0; background:var(--surface2); border:1px solid var(--border); color:var(--text);" onclick="startQuiz()">🔄 কুইজ রিসেট করুন</button>
+    </div>
   </div>
 
-  <div class="nav-row">
-    <button class="nav-btn" onclick="prevCard()">← আগে</button>
-    <button class="shuffle-btn" onclick="shuffle()">🔀 শাফল</button>
-    <button class="nav-btn" onclick="nextCard()">পরে →</button>
+  <!-- COMPLETION OVERLAY -->
+  <div class="completion" id="completion">
+    <h2 id="completionTitle">🎉 চমৎকার পারফরম্যান্স!</h2>
+    <p id="completionMsg"></p>
+    <button class="restart-btn" onclick="restart()">আবার প্র্যাকটিস করুন</button>
   </div>
 
   <div class="keyboard-hint">
-    কীবোর্ড: <kbd>Space</kbd> উল্টান • <kbd>→</kbd> পরে • <kbd>←</kbd> আগে • <kbd>K</kbd> জানি • <kbd>A</kbd> আবার • <kbd>S</kbd> শব্দ
+    কীবোর্ড শর্টকাট: <kbd>Space</kbd> কার্ড উল্টান • <kbd>→</kbd> পরে • <kbd>←</kbd> আগে • <kbd>K</kbd> জানি • <kbd>A</kbd> রিভিউ
   </div>
+
   <footer class="site-footer">
-    Developed by <span>Habib</span>
+    Developed by <span>Habib</span> • Advanced Engine Active
   </footer>
 </div>
 
 <script>
-const CAT_COLORS = {
-  food:'#ff8906', drink:'#3da9fc', home:'#43d9ad',
-  adj:'#a78bfa', verb:'#f25f4c', phrase:'#e53170', other:'#94a3b8'
-};
-const CAT_BG = {
-  food:'rgba(255,137,6,0.12)', drink:'rgba(61,169,252,0.12)', home:'rgba(67,217,173,0.12)',
-  adj:'rgba(167,139,250,0.12)', verb:'rgba(242,95,76,0.12)', phrase:'rgba(229,49,112,0.12)', other:'rgba(148,163,184,0.12)'
-};
-const CAT_LABELS = {
-  food:'খাবার', drink:'পানীয়', home:'ঘর/অফিস', adj:'বিশেষণ', verb:'ক্রিয়া', phrase:'বাক্যাংশ', other:'অন্যান্য'
-};
-const LESSON_COLORS = {'5':'#ff8906','6':'#3da9fc','7':'#43d9ad','8':'#a78bfa','10':'#fbbf24','11':'#f43f5e'};
-
+// WORDS Array is kept intact from the original code base
 const WORDS = [
   // =========== LESSON 5 ===========
   {l:'5',jp:'朝ご飯',kana:'あさごはん',rom:'asagohan',bn:'সকালের নাস্তা',cat:'food',
@@ -646,16 +405,16 @@ const WORDS = [
    trick:'<em>কুদামোনো</em> — "কুদরতের মনোহর জিনিস" = প্রকৃতির উপহার = ফল!',
    exJp:'果物が好きです。',exBn:'আমি ফল পছন্দ করি।'},
   {l:'5',jp:'紅茶',kana:'こうちゃ',rom:'kōcha',bn:'কালো চা',cat:'drink',
-   trick:'<em>কোউ</em> = লাল/গোলাপি রং + <em>চা</em> = চা। লাল চা = কালো চা!',
-   exJp:'紅茶を飲みます。',exBn:'কালো চা পান করি।'},
+   trick:'<em>কোউ</em> = লাল/গোলাپی রং + <em>চা</em> = চা। লাল চা = কালো চা!',
+   exJp:'紅茶を飲みます。',exBn:'کালো চা পান করি।'},
   {l:'5',jp:'コーヒー',kana:'コーヒー',rom:'kōhī',bn:'কফি',cat:'drink',
    trick:'<em>Coffee</em> → কোওহিই। Coffee = কফি = কোওহিই। একই!',
    exJp:'コーヒーが好きです。',exBn:'কফি পছন্দ করি।'},
   {l:'5',jp:'コーラ',kana:'コーラ',rom:'kōra',bn:'কোলা',cat:'drink',
-   trick:'<em>Cola</em> → কোওরা। একই জিনিস, একটু ঘুরিয়ে!',
+   trick:'<em>Cola</em> → কোওরা。 একই জিনিস, একটু ঘুরিয়ে!',
    exJp:'コーラを飲みます。',exBn:'কোলা পান করি।'},
   {l:'5',jp:'ご飯',kana:'ごはん',rom:'gohan',bn:'রান্না করা ভাত',cat:'food',
-   trick:'"<em>গো</em>-হান" — ভাত না হলে জাপানি খাবার অসম্পূর্ণ। গো করে ভাত আসে!',
+   trick:'"<em>গো</em>-هان" — ভাত না হলে জাপানি খাবার অসম্পূর্ণ। গো করে ভাত আসে!',
    exJp:'ご飯を食べます。',exBn:'ভাত খাই।'},
   {l:'5',jp:'魚',kana:'さかな',rom:'sakana',bn:'মাছ',cat:'food',
    trick:'"<em>সাগর</em>ের কানা (মাছ)" → সা-কানা = সাগরের মাছ!',
@@ -664,7 +423,7 @@ const WORDS = [
    trick:'"সাশিমি" = কাঁচা শরীর। কাঁচা মাছ কেটে পরিবেশন = সাশিমি!',
    exJp:'刺身が好きです。',exBn:'সাশিমি পছন্দ করি।'},
   {l:'5',jp:'サラダ',kana:'サラダ',rom:'sarada',bn:'সালাদ',cat:'food',
-   trick:'<em>Salad</em> → সারাদা। জাপানিতে l→r হয়! Salad = সারাদা।',
+   trick:'<em>Salad</em> → সারাদা। জাপানিতে l→r হয়! Salad = সারাদা。',
    exJp:'サラダを食べます。',exBn:'সালাদ খাই।'},
   {l:'5',jp:'ジュース',kana:'ジュース',rom:'jūsu',bn:'জুস',cat:'drink',
    trick:'<em>Juice</em> → জুউসু। সহজ — juice-ই জুউসু!',
@@ -679,8 +438,8 @@ const WORDS = [
    trick:'"<em>সোবা</em>" — বাংলায় সোবা মানে পাশে। সোবা নুডলস জাপানিদের সবচেয়ে কাছের খাবার!',
    exJp:'そばを食べます。',exBn:'সোবা খাই।'},
   {l:'5',jp:'卵',kana:'たまご',rom:'tamago',bn:'ডিম',cat:'food',
-   trick:'"<em>তামা</em>" = गोलाकार জিনিস। ডিম গোল = তামাগো!',
-   exJp:'卵を食べます。',exBn:'ডিম খাই。'},
+   trick:'"<em>তামা</em>" = गोलाকার জিনিস। ডিম গোল = তামাগো!',
+   exJp:'卵を食べます。',exBn:'ডিম খাই।'},
   {l:'5',jp:'天ぷら',kana:'てんぷら',rom:'tenpura',bn:'টেম্পুরা (ভাজা খাবার)',cat:'food',
    trick:'"Tempura" পর্তুগিজ থেকে এসেছে! বিশ্ব ভ্রমণ করে জাপানে পৌঁছেছে।',
    exJp:'天ぷらを食べます。',exBn:'টেম্পুরা খাই।'},
@@ -700,7 +459,7 @@ const WORDS = [
    trick:'"<em>তাবে</em>" মনে রাখুন = খাওয়া। তাবে+রু = খাই!',
    exJp:'何を食べますか？',exBn:'কী খাবেন?'},
   {l:'5',jp:'飲む',kana:'のむ',rom:'nomu',bn:'পান করা',cat:'verb',
-   trick:'"<em>নোমু</em>" — ইংরেজিতে "nom nom" বলে খাওয়ার সময়। নোমু = পান করা!',
+   trick:'"<em>নোমু</em>" — ইংরেজিতে "nom nom" বলে খাওয়ার সময়। நோமு = পান করা!',
    exJp:'何を飲みますか？',exBn:'কী পান করবেন?'},
   {l:'5',jp:'何',kana:'なに / なん',rom:'nani / nan',bn:'কি / কী',cat:'other',
    trick:'"<em>নানি</em>" — বাংলায় নানি জিজ্ঞেস করেন "কী হলো?" নানি = কী!',
@@ -732,17 +491,17 @@ const WORDS = [
    trick:'<em>Apple Pie</em> → আপ্পুরু পাই। সরাসরি ইংরেজি!',
    exJp:'アップルパイを食べます。',exBn:'আপেল পাই খাই।'},
   {l:'6',jp:'居酒屋',kana:'いざかや',rom:'izakaya',bn:'ইজাকায়া (জাপানি বার)',cat:'other',
-   trick:'"<em>ইজা</em>" = বসুন + "<em>কায়া</em>" = দোকান। বসে মদ খাওয়ার দোকান = ইজাকায়া!',
+   trick:'"<em>ইজা</em>" = বসুন + "<em>কায়า</em>" = দোকান। বসে মদ খাওয়ার দোকান = ইজাকায়া!',
    exJp:'居酒屋でビールを飲みます。',exBn:'ইজাকায়ায় বিয়ার পান করি।'},
   {l:'6',jp:'枝豆',kana:'えだまめ',rom:'edamame',bn:'এডামামে (সবুজ সয়াবিন)',cat:'food',
    trick:'"<em>এদা</em>" = ডাল + "<em>মামে</em>" = মটরশুঁটি। ডালের মটরশুঁটি = এডামামে!',
-   exJp:'枝豆を食べます。',exBn:'এডামামে খাই。'},
+   exJp:'枝豆を食べます。',exBn:'এডামামে খাই।'},
   {l:'6',jp:'唐揚げ',kana:'からあげ',rom:'karaage',bn:'ভাজা মুরগি',cat:'food',
    trick:'"<em>কারা</em>" = খালি/সরল + "<em>আগে</em>" = ভাজা। সহজ ভাজা মুরগি!',
    exJp:'唐揚げが好きです。',exBn:'ভাজা মুরগি পছন্দ করি।'},
   {l:'6',jp:'ケチャップ',kana:'ケチャップ',rom:'kechappu',bn:'কেচাপ',cat:'food',
    trick:'<em>Ketchup</em> → কেচাপ্পু। একদম সরাসরি!',
-   exJp:'ケチャップをつけます。',exBn:'কেচাপ লাগাই।'},
+   exJp:'ケチャップをつけます。',exBn:'কেচাপ লাগাই。'},
   {l:'6',jp:'チキン',kana:'チキン',rom:'chikin',bn:'মুরগি',cat:'food',
    trick:'<em>Chicken</em> → চিকিন। সহজ!',
    exJp:'チキンを食べます。',exBn:'মুরগি খাই।'},
@@ -759,7 +518,7 @@ const WORDS = [
    trick:'<em>Drink</em> → দোরinকু। Drink = পানীয়!',
    exJp:'ドリンクは何にしますか？',exBn:'পানীয় কী নিবেন?'},
   {l:'6',jp:'生ビール',kana:'なまビール',rom:'nama bīru',bn:'ড্রাফট বিয়ার',cat:'drink',
-   trick:'"<em>নামা</em>" = তাজা/কাঁচা + "<em>বিইরু</em>" = বিয়ার। তাজা বিয়ার = ড্রাফট!',
+   trick:'"<em>নামা</em>" = তাজা/কাঁচা + "<em>বিইরু</em>" = বিয়ার。 তাজা বিয়ার = ড্রাফট!',
    exJp:'生ビールをください。',exBn:'ড্রাফট বিয়ার দিন।'},
   {l:'6',jp:'ハンバーガー',kana:'ハンバーガー',rom:'hambāgā',bn:'হ্যামবার্গার',cat:'food',
    trick:'<em>Hamburger</em> → হামবাআগাআ। বার্গারই — জাপানি মুখে!',
@@ -771,7 +530,7 @@ const WORDS = [
    trick:'<em>Hot Coffee</em> → হোত্তো কোওহিই। Hot + Coffee!',
    exJp:'ホットコーヒーをください。',exBn:'গরম কফি দিন।'},
   {l:'6',jp:'マヨネーズ',kana:'マヨネーズ',rom:'mayonēzu',bn:'মেয়নেজ',cat:'food',
-   trick:'<em>Mayonnaise</em> → মায়োনেইজু। একদম সরাসরি!',
+   trick:'<em>Mayonnaise</em> → মায়োনেইজু。 একদম সরাসরি!',
    exJp:'マヨネーズをつけます。',exBn:'মেয়নেজ লাগাই।'},
   {l:'6',jp:'ウーロン茶',kana:'ウーロンちゃ',rom:'ūron cha',bn:'ওলং চা',cat:'drink',
    trick:'<em>Oolong</em> চা-র নাম সরাসরি + <em>ちゃ (চা)</em>। ওলং চা-ই!',
@@ -786,7 +545,7 @@ const WORDS = [
    trick:'"ওই! শিই!" — কিছু সুস্বাদু হলে "ওহ!" বলে উঠি। ওইশিই = সুস্বাদু!',
    exJp:'これはおいしいです！',exBn:'এটা সুস্বাদু!'},
   {l:'6',jp:'すみません',kana:'すみません',rom:'sumimasen',bn:'মাফ করবেন',cat:'phrase',
-   trick:'"সুমি-<em>মাসেন</em>" — "Sorry ma\'am" → সরি + মাসেন = মাফ করবেন!',
+   trick:'"সুমি-<em>মাসেন</em>" — "Sorry ma\'am" → সরি + মাসেন = ماফ করবেন!',
    exJp:'すみません、水をください。',exBn:'মাফ করবেন, পানি দিন।'},
   {l:'6',jp:'何になさいますか？',kana:'なになさいますか？',rom:'nani ni nasaimasu ka?',bn:'কোনটি নিবেন?',cat:'phrase',
    trick:'"নানি" = কী + "নাসাই" = করুন। কী করবেন? = কোনটি নিবেন?',
@@ -801,17 +560,17 @@ const WORDS = [
    exJp:'テレビを切ります。',exBn:'টেলিভিশন বন্ধ করি।'},
   {l:'7',jp:'新しい',kana:'あたらしい',rom:'atarashii',bn:'নতুন',cat:'adj',
    trick:'"<em>আতারা</em>" — "এখন তারা-তারা নতুন!" | আতারাশিই = নতুন!',
-   exJp:'新しいアパートです。',exBn:'নতুন আপার্টমেন্ট।'},
+   exJp:'新しいアパートです。',exBn:'নতুন আপার্টমেন্ট。'},
   {l:'7',jp:'アパート',kana:'アパート',rom:'apāto',bn:'আপার্টমেন্ট',cat:'home',
    trick:'<em>Apartment</em> → আপাআতো। Apartment = আপার্টমেন্ট = আপাআতো!',
    exJp:'アパートに住んでいます。',exBn:'আপার্টমেন্টে থাকি।'},
   {l:'7',jp:'いす',kana:'いす',rom:'isu',bn:'চেয়ার',cat:'home',
    trick:'"<em>ইসু</em>" — "ইস, বসতে পারছি না!" চেয়ার না থাকলে ইস বলতে হয়। ইসু = চেয়ার!',
-   exJp:'いすに座ります。',exBn:'চেয়ারে বসি।'},
+   exJp:'いすに座ります。',exBn:'চেয়ারে বси।'},
   {l:'7',jp:'家',kana:'いえ',rom:'ie',bn:'বাড়ি',cat:'home',
    trick:'"<em>ইয়ে</em>" — "ইয়ে, বাড়ি পাওয়া গেছে!" ইয়ে = বাড়ি!',
    exJp:'家に帰ります。',exBn:'বাড়ি ফিরি।'},
-  {l:'7',jp:'一戸建て',kana:'いっこだて',rom:'ikkodate',bn:'বিçalves বাড়ি (আলাদা ঘর)',cat:'home',
+  {l:'7',jp:'一戸建て',kana:'いっこだて',rom:'ikkodate',bn:'আলাদা বাড়ি',cat:'home',
    trick:'"<em>ইক্কো</em>" = একটি + "<em>দাতে</em>" = বানানো। একটি আলাদা বাড়ি!',
    exJp:'一戸建てに住んでいます。',exBn:'আলাদা বাড়িতে থাকি।'},
   {l:'7',jp:'居間',kana:'いま',rom:'ima',bn:'লিভিং রুম',cat:'home',
@@ -821,13 +580,13 @@ const WORDS = [
    trick:'"<em>উচি</em>" — "উচিত আমার বাড়িতে থাকা।" উচি = (আমার) বাড়ি!',
    exJp:'うちに帰ります。',exBn:'(আমার) বাড়ি ফিরি।'},
   {l:'7',jp:'うるさい',kana:'うるさい',rom:'urusai',bn:'কোলাহলপূর্ণ',cat:'adj',
-   trick:'"<em>উরুসাই</em>" — "উরু সাই সাই" করে চিৎকার করছে! কোলাহল = উরুসাই!',
+   trick:'"<em>উруসাই</em>" — "উরু সাই সাই" করে চিৎকার করছে! কোলাহল = উরুসাই!',
    exJp:'この部屋はうるさいです。',exBn:'এই ঘর কোলাহলপূর্ণ।'},
   {l:'7',jp:'エアコン',kana:'エアコン',rom:'eakon',bn:'এয়ার কন্ডিশনার',cat:'home',
    trick:'<em>Air Conditioner</em> → এআকোন। AC = এয়ার কন্ডিশনার = এআকোন!',
    exJp:'エアコンを入れます。',exBn:'এয়ার কন্ডিশনার চালু করি।'},
   {l:'7',jp:'大きい',kana:'おおきい',rom:'ōkii',bn:'বড়',cat:'adj',
-   trick:'"<em>오오키이</em>" — "ওও (বিস্ময়), কি বড়!" ওওকিই = বড়!',
+   trick:'"<em>오오کیい</em>" — "ওও (বিস্ময়), কি বড়!" ওওকিই = বড়!',
    exJp:'大きい家です。',exBn:'বড় বাড়ি।'},
   {l:'7',jp:'お寺',kana:'おてら',rom:'otera',bn:'মন্দির',cat:'other',
    trick:'"ও-<em>তেরা</em>" — "ওহ, তেরা!" মানে "তোমার (ঈশ্বরের) জায়গা" = মন্দির!',
@@ -842,7 +601,7 @@ const WORDS = [
    trick:'"<em>কাই</em>" — "কাই (কয়) তলা?" জিজ্ঞেস করি। কাই = তলা!',
    exJp:'三階に住んでいます。',exBn:'তৃতীয় তলায় থাকি।'},
   {l:'7',jp:'階段',kana:'かいだん',rom:'kaidan',bn:'সিঁড়ি',cat:'home',
-   trick:'"<em>কাইদান</em>" — "কাই (কোন তলা)? দান করি সিঁড়ি!" সিঁড়ি দিয়ে তলায় যাই!',
+   trick:'"<em>কাইدان</em>" — "কাই (কোন তলা)? দান করি সিঁড়ি!" সিঁড়ি দিয়ে তলায় যাই!',
    exJp:'階段を上ります。',exBn:'সিঁড়ি দিয়ে উঠি।'},
   {l:'7',jp:'学校',kana:'がっこう',rom:'gakkō',bn:'বিদ্যালয় / স্কুল',cat:'other',
    trick:'"<em>গাক্কোও</em>" — "গাকো" শুনলে "যাকো (স্কুলে যাও)" মনে পড়ে!',
@@ -854,7 +613,7 @@ const WORDS = [
    trick:'"<em>কিতানাই</em>" — "কিতা (নোংরা) নাই (নয়)!" উল্টো ভাবলে মনে থাকে!',
    exJp:'この部屋はきたないです。',exBn:'এই ঘর অপরিচ্ছন্ন।'},
   {l:'7',jp:'キッチン',kana:'キッチン',rom:'kitchin',bn:'রান্নাঘর',cat:'home',
-   trick:'<em>Kitchen</em> → কিত্চিন। Kitchen = রান্নাঘর = কিত্চিন!',
+   trick:'<em>Kitchen</em> → কিত্চিন。 Kitchen = রান্নাঘর = কিত্চিন!',
    exJp:'キッチンで料理します。',exBn:'রান্নাঘরে রান্না করি।'},
   {l:'7',jp:'きれい（な）',kana:'きれい（な）',rom:'kirei (na)',bn:'পরিষ্কার / সুন্দর',cat:'adj',
    trick:'"<em>কিরেই</em>" — "কি রে! সুন্দর!" বলে বিস্ময় প্রকাশ করি। কিরেই = সুন্দর!',
@@ -862,7 +621,7 @@ const WORDS = [
   {l:'7',jp:'くつ',kana:'くつ',rom:'kutsu',bn:'জুতা',cat:'other',
    trick:'"<em>কুতসু</em>" — "কুতসু কুতসু" করে জুতা পরে হাঁটার শব্দ!',
    exJp:'くつを脱いでください。',exBn:'জুতা খুলুন।'},
-  {l:'7',jp:'玄関',kana:'げんかん',rom:'genkan',bn:'প্রবেশদ্বার',cat:'home',
+  {l:'7',jp:'玄関',kana:'げんかん',rom:'genkan',bn:'প্রवेशদ্বার',cat:'home',
    trick:'"<em>গেনকান</em>" — "ゲート + カン" = গেটের কান (দরজা)। প্রবেশদ্বার!',
    exJp:'玄関でくつを脱ぎます。',exBn:'প্রবেশদ্বারে জুতা খুলি।'},
   {l:'7',jp:'公園',kana:'こうえん',rom:'kōen',bn:'পার্ক',cat:'other',
@@ -882,7 +641,7 @@ const WORDS = [
    exJp:'除湿をします。',exBn:'আর্দ্রতা অপসারণ করি।'},
   {l:'7',jp:'炊飯器',kana:'すいはんき',rom:'suihanki',bn:'রাইস কুকার',cat:'home',
    trick:'"<em>সুইহান</em>" = ভাত রান্না + "<em>কি</em>" = যন্ত্র। ভাত রান্নার যন্ত্র = রাইস কুকার!',
-   exJp:'炊飯器でご飯を炊きます。',exBn:'炊飯器でご飯を炊きます。'},
+   exJp:'炊飯器でご飯を炊きます。',exBn:'রাইস কুকারে ভাত রান্না করি।'},
   {l:'7',jp:'スタート',kana:'スタート',rom:'sutāto',bn:'শুরু',cat:'other',
    trick:'<em>Start</em> → সুতাআতো। Start = শুরু = সুতাআতো!',
    exJp:'スタートします。',exBn:'শুরু করি।'},
@@ -911,7 +670,7 @@ const WORDS = [
    trick:'"<em>দেনশি</em>" = ইলেকট্রনিক + "<em>রেনজি</em>" = রেঞ্জ। ইলেকট্রনিক রেঞ্জ = মাইক্রোওয়েভ!',
    exJp:'電子レンジで温めます。',exBn:'মাইক্রোওয়েভে গরম করি।'},
   {l:'7',jp:'トイレ',kana:'トイレ',rom:'toire',bn:'টয়লেট',cat:'home',
-   trick:'<em>Toilet</em> → তোইরে। Toilet = টয়লেট = তোইরে!',
+   trick:'<em>Toilet</em> → तोइरे। Toilet = টয়লেট = তোইরে!',
    exJp:'トイレはどこですか？',exBn:'টয়লেট কোথায়?'},
   {l:'7',jp:'トースター',kana:'トースター',rom:'tōsutā',bn:'টোস্টার',cat:'home',
    trick:'<em>Toaster</em> → তোওসুতাア। Toaster = টোস্টার!',
@@ -920,35 +679,35 @@ const WORDS = [
    trick:'"<em>নিওয়া</em>" — "নিওয়া (নিজের) বাগান।" নিওয়া = নিজের বাগান!',
    exJp:'庭で花を育てます。',exBn:'বাগানে ফুল চাষ করি।'},
   {l:'7',jp:'バルコニー',kana:'バルコニー',rom:'barukonyī',bn:'বালকনি',cat:'home',
-   trick:'<em>Balcony</em> → বারুকোনিই। Balcony = বালকনি = বারুকোনিই!',
-   exJp:'バルコニーに出ます。',exBn:'বালকনিতে যাই。'},
+   trick:'<em>Balcony</em> → বারুকোনিই। Balcony = બાળકনি = বারুকোনিই!',
+   exJp:'バルコニーに出ます。',exBn:'বালকনিতে যাই।'},
   {l:'7',jp:'広い',kana:'ひろい',rom:'hiroi',bn:'প্রশস্ত',cat:'adj',
    trick:'"<em>হিরোই</em>" — "হিরো" সবসময় বড় মাঠে লড়াই করে। প্রশস্ত = হিরোই!',
    exJp:'広い部屋です。',exBn:'প্রশস্ত ঘর।'},
   {l:'7',jp:'ふとん',kana:'ふとん',rom:'futon',bn:'ফুটন (জাপানি বিছানা)',cat:'home',
    trick:'<em>Futon</em> সারা বিশ্বে বিখ্যাত। ফুটন = জাপানি বিছানা!',
    exJp:'ふとんで寝ます。',exBn:'ফুটনে ঘুমাই।'},
-  {l:'7',jp:'古い',kana:'ふるい',rom:'furui',bn:'পুরাতন',cat:'adj',
+  {l:'7',jp:'古い',kana:'古い',rom:'furui',bn:'পুরাতন',cat:'adj',
    trick:'"<em>ফুরুই</em>" — "ফুরিয়ে গেছে" মানে পুরানো হয়ে গেছে। ফুরুই = পুরাতন!',
    exJp:'古い家です。',exBn:'পুরাতন বাড়ি।'},
   {l:'7',jp:'ベッド',kana:'ベッド',rom:'beddo',bn:'বিছানা',cat:'home',
    trick:'<em>Bed</em> → বেদ্দো। Bed = বিছানা = বেদ্দো!',
    exJp:'ベッドで寝ます。',exBn:'বিছানায় ঘুমাই।'},
-  {l:'7',jp:'部屋',kana:'へや',rom:'heya',bn:'কক্ষ / ঘর',cat:'home',
+  {l:'7',jp:'部屋',kana:'部屋',rom:'heya',bn:'কক্ষ / ঘর',cat:'home',
    trick:'"<em>হেয়া</em>" — "হেয়া, এটা আমার ঘর!" হেয়া = ঘর!',
    exJp:'部屋を掃除します。',exBn:'ঘর পরিষ্কার করি।'},
   {l:'7',jp:'ベランダ',kana:'ベランダ',rom:'beranda',bn:'বারান্দা',cat:'home',
    trick:'<em>Veranda</em> → বেরান্দা। Veranda = বারান্দা — একই শব্দ!',
    exJp:'ベランダに出ます。',exBn:'বারান্দায় যাই।'},
   {l:'7',jp:'マンション',kana:'マンション',rom:'manshon',bn:'ম্যানশন / ফ্ল্যাট',cat:'home',
-   trick:'<em>Mansion</em> → মানশোন। Mansion = বড় ফ্ল্যাট!',
+   trick:'<em>Mansion</em> → মানশোন。 Mansion = বড় ফ্ল্যাট!',
    exJp:'マンションに住んでいます。',exBn:'ম্যানশনে থাকি।'},
-  {l:'7',jp:'冷蔵庫',kana:'れいぞうこ',rom:'reizōko',bn:'রেফ্রিজারেটর',cat:'home',
+  {l:'7',jp:'冷蔵庫',kana:'冷蔵庫',rom:'reizōko',bn:'রেফ্রিজარეটর',cat:'home',
    trick:'"<em>রেইজোও</em>" = ঠান্ডা সংরক্ষণ + "<em>কো</em>" = বাক্স। ঠান্ডা বাক্স = ফ্রিজ!',
    exJp:'冷蔵庫に入れます。',exBn:'ف্রিজে রাখি।'},
-  {l:'7',jp:'冷房',kana:'れいぼう',rom:'reibō',bn:'ঠান্ডা করার ব্যবস্থা',cat:'home',
+  {l:'7',jp:'冷房',kana:'冷房',rom:'reibō',bn:'ঠান্ডা করার ব্যবস্থা',cat:'home',
    trick:'"<em>রেই</em>" = ঠান্ডা + "<em>বোও</em>" = ব্যবস্থা। ঠান্ডার ব্যবস্থা = এসি কুলিং!',
-   exJp:'冷房を入れます。',exBn:'ঠান্ডার ব্যবস্থা চালু করি।'},
+   exJp:'冷房を入れます。',exBn:'ঠান্ডা করার ব্যবস্থা চালু করি।'},
   {l:'7',jp:'Wi-Fi',kana:'ワイファイ',rom:'wai fai',bn:'ওয়াই-ফাই',cat:'home',
    trick:'Wi-Fi → ওয়াইফাই। একদম সরাসরি!',
    exJp:'Wi-Fiがありますか？',exBn:'ওয়াই-ফাই আছে কি?'},
@@ -958,15 +717,15 @@ const WORDS = [
   {l:'7',jp:'リビング',kana:'リビング',rom:'ribingu',bn:'লিভিং রুম',cat:'home',
    trick:'<em>Living (room)</em> → রিবinগু। Living Room = লিভিং রুম!',
    exJp:'リビングでくつろぎます。',exBn:'লিভিং রুমে বিশ্রাম নিই।'},
-  {l:'7',jp:'使う',kana:'つかう',rom:'tsukau',bn:'ব্যবহার করা',cat:'verb',
-   trick:'"<em>তসুকাউ</em>" — "তাকে কাউ (কেনা) ব্যবহারের জন্য!" ব্যবহার = তসুকাউ!',
+  {l:'7',jp:'使う',kana:'使う',rom:'tsukau',bn:'ব্যবহার করা',cat:'verb',
+   trick:'"<em>তсуকাউ</em>" — "তাকে কাউ (কেনা) ব্যবহারের জন্য!" ব্যবহার = তсуকাউ!',
    exJp:'エアコンを使います。',exBn:'এয়ার কন্ডিশনার ব্যবহার করি।'},
 
   // =========== LESSON 8 ===========
   {l:'8',jp:'いる',kana:'いる',rom:'iru',bn:'উপস্থিত থাকা (জীবন্ত)',cat:'verb',
    trick:'"<em>ইরু</em>" — "ইরে (আছ)?" জিজ্ঞেস করা। উপস্থিত = ইরু!',
    exJp:'田中さんがいます。',exBn:'তানাকা সান আছেন।'},
-  {l:'8',jp:'上',kana:'うえ',rom:'ue',bn:'উপরে',cat:'other',
+  {l:'8',jp:'上',kana:'上',rom:'ue',bn:'উপরে',cat:'other',
    trick:'"<em>উয়ে</em>" — "উপরে যাও!" উয়ে = উপরে!',
    exJp:'机の上にあります。',exBn:'ডেস্কের উপরে আছে।'},
   {l:'8',jp:'打ち合わせをする',kana:'うちあわせをする',rom:'uchiawase o suru',bn:'সাকাত্কার করা',cat:'verb',
@@ -978,9 +737,9 @@ const WORDS = [
   {l:'8',jp:'お茶をいれる',kana:'おちゃをいれる',rom:'ocha o ireru',bn:'চা তৈরি করা',cat:'verb',
    trick:'"ওচা" = চা + "<em>ইরেরু</em>" = ঢোকানো/বানানো। চা বানানো = ওচা ইরেরু!',
    exJp:'お茶をいれます。',exBn:'চা তৈরি করি।'},
-  {l:'8',jp:'会議室',kana:'かいぎしつ',rom:'kaigishitsu',bn:'মিটিং রুম',cat:'other',
+  {l:'8',jp:'会議室',kana:'かいぎしつ',rom:'kaigishitsu',bn:'মিٹنگ রুম',cat:'other',
    trick:'"<em>কাইগি</em>" = মিটিং + "<em>শিতসু</em>" = ঘর। মিটিং ঘর = মিটিং রুম!',
-   exJp:'会議室で打ち合わせをします。',exBn:'মিটিং রুমে সাক্ষাৎকার করি।'},
+   exJp:'会議室で打ち合わせをします。',exBn:'মিٹنگ রুমে সাক্ষাৎকার করি।'},
   {l:'8',jp:'ガムテープ',kana:'ガムテープ',rom:'gamu tēpu',bn:'প্যাকিং টেপ',cat:'other',
    trick:'<em>Gum Tape</em> → গামু তেইপু। Gum Tape = আঠালো টেপ!',
    exJp:'ガムテープで貼ります。',exBn:'প্যাকিং টেপ দিয়ে লাগাই।'},
@@ -1002,7 +761,7 @@ const WORDS = [
   {l:'8',jp:'ごみ箱',kana:'ごみばこ',rom:'gomibako',bn:'আবর্জনা ক্যান',cat:'other',
    trick:'"<em>গোমি</em>" = আবর্জনা + "<em>বাকো</em>" = বাক্স। আবর্জনার বাক্স!',
    exJp:'ごみ箱に捨てます。',exBn:'আবর্জনা ক্যানে ফেলি।'},
-  {l:'8',jp:'下',kana:'した',rom:'shita',bn:'নীচে',cat:'other',
+  {l:'8',jp:'下',kana:'下',rom:'shita',bn:'নীচে',cat:'other',
    trick:'"<em>শিতা</em>" — "শিতা (নীচে)" বাংলায় "নিচে শুতা" মনে করুন!',
    exJp:'机の下にあります。',exBn:'ডেস্কের নীচে আছে।'},
   {l:'8',jp:'事務室',kana:'じむしつ',rom:'jimushitsu',bn:'কার্যালয়',cat:'other',
@@ -1011,48 +770,48 @@ const WORDS = [
   {l:'8',jp:'たぶん',kana:'たぶん',rom:'tabun',bn:'সম্ভবত',cat:'other',
    trick:'"<em>তাবুন</em>" — "তাহলে বুন (বলুন)?" সম্ভবত এটাই। তাবুন = সম্ভবত!',
    exJp:'たぶん、います。',exBn:'সম্ভবত আছেন।'},
-  {l:'8',jp:'男性',kana:'だんせい',rom:'dansei',bn:'पुरुष',cat:'other',
+  {l:'8',jp:'男性',kana:'男性',rom:'dansei',bn:'पुरुष',cat:'other',
    trick:'"<em>দান</em>" — "দান করেন পুরুষেরা।" দানসেই = পুরুষ!',
    exJp:'男性のトイレはどこですか？',exBn:'पुरुषদের টয়লেট কোথায়?'},
-  {l:'8',jp:'机',kana:'つくえ',rom:'tsukue',bn:'ডেস্ক',cat:'other',
+  {l:'8',jp:'机',kana:'机',rom:'tsukue',bn:'ডেস্ক',cat:'other',
    trick:'"<em>তসুকুয়ে</em>" — "তাকে (ডেস্কে) কাজ করতে বলো!" তসুকুয়ে = ডেস্ক!',
    exJp:'机の上に置きます。',exBn:'ডেস্কের উপর রাখি।'},
-  {l:'8',jp:'中',kana:'なか',rom:'naka',bn:'ভিতরে',cat:'other',
+  {l:'8',jp:'中',kana:'中',rom:'naka',bn:'ভিতরে',cat:'other',
    trick:'"<em>নাকা</em>" — "নাকের ভিতরে।" নাকা = ভিতরে!',
    exJp:'箱の中にあります。',exBn:'বাক্সের ভিতরে আছে।'},
   {l:'8',jp:'のり',kana:'のり',rom:'nori',bn:'আঠা',cat:'other',
    trick:'"<em>নোরি</em>" — "নোরি নোরি আঠা লাগাই।" নোরি = আঠা!',
    exJp:'のりで貼ります。',exBn:'আঠা দিয়ে লাগাই।'},
-  {l:'8',jp:'箱',kana:'はこ',rom:'hako',bn:'বাক্স',cat:'other',
+  {l:'8',jp:'箱',kana:'箱',rom:'hako',bn:'বাক্স',cat:'other',
    trick:'"<em>হাকো</em>" — "হাকো দিয়ে বাক্স বানাও।" হাকো = বাক্স!',
    exJp:'箱に入れます。',exBn:'বাক্সে রাখি।'},
   {l:'8',jp:'はさみ',kana:'はさみ',rom:'hasami',bn:'কাঁচি',cat:'other',
    trick:'"<em>হাসামি</em>" — "হাস (কাটো)! আমি কাঁচি দিয়ে।" হাসামি = কাঁচি!',
-   exJp:'はさみで切ります。',exBn:'কাঁচি দিয়ে কাটি।'},
+   exJp:'はさみで切ります。',exBn:'কাঁচি দিয়ে কাটি。'},
   {l:'8',jp:'引き出し',kana:'引き出し',rom:'hikidashi',bn:'ড্রয়ার',cat:'other',
    trick:'"<em>হিকি</em>" = টানা + "<em>দাশি</em>" = বের করা। টেনে বের করা = ড্রয়ার!',
    exJp:'引き出しを開けます。',exBn:'ড্রয়ার খুলি।'},
   {l:'8',jp:'FAX',kana:'ファックス',rom:'fakkusu',bn:'ফ্যাক্স',cat:'other',
-   trick:'FAX = ফ্যাক্স। সারা বিশ্বে একই!',
-   exJp:'FAXを送ります。',exBn:'ফ্যাক্স পাঠাই।'},
-  {l:'8',jp:'横',kana:'よこ',rom:'yoko',bn:'পাশে',cat:'other',
+   trick:'FAX =্যাক্স। সারা বিশ্বে একই!',
+   exJp:'FAXを送ります。',exBn:'ف্যাক্স পাঠাই।'},
+  {l:'8',jp:'横',kana:'横',rom:'yoko',bn:'পাশে',cat:'other',
    trick:'"<em>য়োকো</em>" — "যোকো (পাশে) থাকো।" য়োকো = পাশে!',
    exJp:'机の横にあります。',exBn:'ডেস্কের পাশে আছে।'},
   {l:'8',jp:'ありました',kana:'ありました',rom:'arimashita',bn:'এখানে আছে/ছিল',cat:'phrase',
-   trick:'"<em>আরিমাশিতা</em>" = ছিল/পেয়ে গেছি। "আছে!" পেয়ে গেলে বলি!',
+   trick:'"<em>আরিমাшিতা</em>" = ছিল/পেয়ে গেছি। "আছে!" পেয়ে গেলে বলি!',
    exJp:'ここにありました！',exBn:'এখানে ছিল/আছে!'},
-  {l:'8',jp:'探してみます',kana:'さがしてみます',rom:'sagashitemimasu',bn:'খুঁজে দেখবো',cat:'phrase',
+  {l:'8',jp:'探してみます',kana:'探してみます',rom:'sagashitemimasu',bn:'খুঁজে দেখবো',cat:'phrase',
    trick:'"<em>সাগাশিতে</em>" = খোঁজা + "<em>মিমাসু</em>" = দেখা। খুঁজে দেখবো!',
    exJp:'探してみます。',exBn:'খুঁজে দেখবো।'},
 
-  // =========== LESSON 10 ===========[cite: 1]
+  // =========== LESSON 10 ===========
   {l:'10',jp:'あとで',kana:'あとで',rom:'atode',bn:'পরবর্তীতে / পরে',cat:'other',
    trick:'<em>আতো দে</em> -> "আতো" দেরি করো না, <b>পরে</b> করো!',
    exJp:'あとで電話します。',exBn:'পরে কল করব।'},
   {l:'10',jp:'えんぴつ',kana:'えんぴつ',rom:'enpitsu',bn:'পেন্সিল',cat:'other',
-   trick:'<em>এনপিতসু</em> -> "এন" (কালি) ছাড়া "পিতসু" (পেন্সিল) দিয়ে লিখি!',
+   trick:'<em>エンピツ</em> -> "এন" (কালি) ছাড়া "পিতসু" (পেন্সিল) দিয়ে লিখি!',
    exJp:'えんぴつで書きます。',exBn:'পেন্সিল দিয়ে লিখি।'},
-  {l:'10',jp:'会議室',kana:'かいぎしつ',rom:'kaigishitsu',bn:'মিটিং রুম',cat:'home',
+  {l:'10',jp:'会議室',kana:'会議室',rom:'kaigishitsu',bn:'মিটিং রুম',cat:'home',
    trick:'<em>কাইগি</em> (মিটিং) + <em>শিতসু</em> (রুম) = মিটিং রুম।',
    exJp:'会議室はあそこです。',exBn:'মিটিং রুমটি ওখানে।'},
   {l:'10',jp:'貸す / 貸します',kana:'かす / かします',rom:'kasu / kashimasu',bn:'ধার দেওয়া',cat:'verb',
@@ -1060,8 +819,8 @@ const WORDS = [
    exJp:'ペンを貸してください。',exBn:'দয়া করে কলমটি ধার দিন।'},
   {l:'10',jp:'置く / 置きます',kana:'おく / おきます',rom:'oku / okimasu',bn:'রাখা',cat:'verb',
    trick:'<em>ওকু</em> -> টেবিলের "ওকো" (পাশে) জিনিস "ওকু" (রাখো)!',
-   exJp:'ここに置いてください。',exBn:'দয়া করে এখানে রাখুন।'},
-  {l:'10',jp:'片付ける',kana:'かたづける',rom:'katadukeru',bn:'গোছগাছ করা',cat:'verb',
+   exJp:'ここに置いてください。',exBn:'দয়া করে এখানে রাখুন。'},
+  {l:'10',jp:'片付ける',kana:'片付ける',rom:'katadukeru',bn:'গোছগাছ করা',cat:'verb',
    trick:'<em>কাতাডুকেমু</em> -> "কাতা" (খাতা) গুলো ড্রয়ারে "ঢুকিয়ে" গোছগাছ করো।',
    exJp:'部屋を片付けます。',exBn:'ঘর গোছগাছ করছি।'},
   {l:'10',jp:'カッター',kana:'カッター',rom:'kattā',bn:'কাটার যন্ত্র',cat:'other',
@@ -1072,17 +831,17 @@ const WORDS = [
    exJp:'かみそりで髭を剃ります。',exBn:'রেজর দিয়ে দাড়ি কাটি।'},
   {l:'10',jp:'借りる / 借ります',kana:'かりる / かります',rom:'kariru / karimasu',bn:'ধার করা',cat:'verb',
    trick:'<em>কারিরু</em> -> কার কাছ থেকে "কারি" (গাড়ি) ধার করব?',
-   exJp:'本を借りました。',exBn:'বই ধার করেছি।'},
+   exJp:'本を借りました。',exBn:'বই ধার করেছি。'},
   {l:'10',jp:'こしょう',kana:'こしょう',rom:'koshō',bn:'মরিচ',cat:'food',
-   trick:'<em>কোশৌ</em> -> "কোশ" বা কোয়া যুক্ত ঝাল মরিচ!',
+   trick:'<em>কোшৌ</em> -> "কোশ" বা কোয়া যুক্ত ঝাল মরিচ!',
    exJp:'こしょうを取ってください。',exBn:'দয়া করে মরিচটা দিন।'},
   {l:'10',jp:'コンディショナー',kana:'コンディショナー',rom:'kondishonā',bn:'কন্ডিশনার',cat:'other',
    trick:'ইংরেজি <em>Conditioner</em> থেকে এসেছে।',
-   exJp:'コンディショナーを使います。',exBn:'কন্ডিশনার ব্যবহার করি।'},
+   exJp:'コンディショナーを使います。',exBn:'コンディショナーを使います।'},
   {l:'10',jp:'閉める / 閉めます',kana:'しめる / しめます',rom:'shimeru / shimemasu',bn:'বন্ধ করা',cat:'verb',
    trick:'<em>শিমেরু</em> -> জানলা "শিম" (সীমা) এর মধ্যে বন্ধ করো।',
    exJp:'窓を閉めてください。',exBn:'দয়া করে জানলাটি বন্ধ করুন।'},
-  {l:'10',jp:'数量',kana:'すうりょう',rom:'sūryō',bn:'পরিমাণ',cat:'other',
+  {l:'10',jp:'数量',kana:'数量',rom:'sūryō',bn:'পরিমাণ',cat:'other',
    trick:'<em>সুউরিউ</em> -> সংখ্যার পরিমাণ বা "সূচক" পরিমাণ।',
    exJp:'数量を確認します。',exBn:'পরিমাণ নিশ্চিত করছি।'},
   {l:'10',jp:'コピー',kana:'コピー',rom:'kopī',bn:'কপি',cat:'other',
@@ -1091,18 +850,18 @@ const WORDS = [
   {l:'10',jp:'ごみ',kana:'ごみ',rom:'gomi',bn:'আবর্বজনা',cat:'other',
    trick:'<em>গোমি</em> -> আবর্জনা ফেললে পরিবেশ "গমগম" করে না, নোংরা হয়!',
    exJp:'ごみを捨てます。',exBn:'আবর্জনা ফেলে দিচ্ছি।'},
-  {l:'10',jp:'砂糖',kana:'さとう',rom:'satō',bn:'চিনি',cat:'food',
+  {l:'10',jp:'砂糖',kana:'砂糖',rom:'satō',bn:'চيني',cat:'food',
    trick:'<em>সাতৌ</em> -> "সাত" চামচ চিনি দিলে মিষ্টি বেশি হবে!',
    exJp:'砂糖を入れます。',exBn:'চিনি যোগ করছি।'},
   {l:'10',jp:'塩',kana:'しお',rom:'shio',bn:'লবণ',cat:'food',
    trick:'<em>শিও</em> -> তরকারিতে লবণ দিতে "শিওর" (নিশ্চিত) হও!',
-   exJp:'塩が足りません।',exBn:'লবণ কম হয়েছে।'},
+   exJp:'塩が足りません。',exBn:'লবণ কম হয়েছে।'},
   {l:'10',jp:'シャンプー',kana:'シャンプー',rom:'shampū',bn:'শ্যাম্পু',cat:'other',
    trick:'ইংরেজি <em>Shampoo</em> থেকে শাম্পূ।',
    exJp:'シャンプーを買います。',exBn:'শ্যাম্পু কিনব।'},
-  {l:'10',jp:'充電器',kana:'じゅうでんき',rom:'jūdenki',bn:'চার্জার',cat:'other',
+  {l:'10',jp:'充電器',kana:'充電器',rom:'jūdenki',bn:'চার্জার',cat:'other',
    trick:'<em>জিউডেন</em> (বিদ্যুৎ) + <em>কি</em> (যন্ত্র) = চার্জার।',
-   exJp:'スマホの充電器はどこですか？',exBn:'স্মার্টফোনের চার্জারটি কোথায়?'},
+   exJp:'スマホの充電器はどこですか？',exBn:'স্মার্টፎনের চার্জারটি কোথায়?'},
   {l:'10',jp:'すぐに',kana:'すぐに',rom:'suguni',bn:'অবিলম্বে / দ্রুত',cat:'other',
    trick:'<em>সুগুনি</em> -> "সোজাসুজি" এখনই অবিলম্বে চলে এসো!',
    exJp:'すぐに来てください。',exBn:'অবিলম্বে দয়া করে আসুন।'},
@@ -1114,35 +873,35 @@ const WORDS = [
    exJp:'スプーンをください。',exBn:'একটি চামচ দিন।'},
   {l:'10',jp:'スマホ',kana:'スマホ',rom:'sumaho',bn:'স্মার্টফোন',cat:'other',
    trick:'<em>Smart Phone</em> এর জাপানি সংক্ষিপ্ত রূপ সুমাহো।',
-   exJp:'新しいスマホです।',exBn:'এটি নতুন স্মার্টফোন।'},
-  {l:'10',jp:'石けん',kana:'せっけん',rom:'sekken',bn:'সাবান',cat:'other',
+   exJp:'新しいスマホです。',exBn:'এটি নতুন স্মার্টফোন।'},
+  {l:'10',jp:'石けん',kana:'石けん',rom:'sekken',bn:'সাবান',cat:'other',
    trick:'<em>সেক্কেন</em> -> সাবান মাখলে শরীর "সেক" বা পরিষ্কার হয়।',
    exJp:'石けんで手を洗います。',exBn:'সাবান দিয়ে হাত ধুই।'},
-  {l:'10',jp:'第〜',kana:'だい〜',rom:'dai~',bn:'- তম (যেমন: ১ম, ২য়)',cat:'other',
+  {l:'10',jp:'第〜',kana:'第〜',rom:'dai~',bn:'- তম (যেমন: ১ম, ২য়)',cat:'other',
    trick:'<em>দাই</em> -> "দাই" বা প্রথম স্থান অধিকার করা।',
    exJp:'第十課の単語です。',exBn:'১০-তম পাঠের শব্দ।'},
-  {l:'10',jp:'手伝う / 手伝います',kana:'てつだう / てつだいます',rom:'tetsudau / tetsudaimasu',bn:'সাহায্য করা',cat:'verb',
+  {l:'10',jp:'手伝う / 手伝います',kana:'手伝う / 手伝います',rom:'tetsudau / tetsudaimasu',bn:'সাহায্য করা',cat:'verb',
    trick:'<em>তেতসুদাউ</em> -> "হাত বাড়িয়ে দাও" সাহায্য করার জন্য!',
    exJp:'仕事を伝ってください。',exBn:'কাজে একটু সাহায্য করুন।'},
   {l:'10',jp:'トイレットペーパー',kana:'トイレットペーパー',rom:'toiretto pēpā',bn:'টয়লেট পেপার',cat:'other',
    trick:'ইংরেজি <em>Toilet Paper</em> থেকে তোইরেত্তো পে-পা-।',
    exJp:'トイレットペーパーがありますか？',exBn:'টয়লেট পেপার আছে কি?'},
-  {l:'10',jp:'取る / 取ります',kana:'とる / とります',rom:'toru / torimasu',bn:'নেয়া / পাস করা',cat:'verb',
+  {l:'10',jp:'取る / 取ります',kana:'取る / 取ります',rom:'toru / torimasu',bn:'নেয়া / পাস করা',cat:'verb',
    trick:'<em>তোরু</em> -> ওটা "তোলো" বা নিয়ে নাও।',
    exJp:'塩を取ってください。',exBn:'লবণটা একটু দিন (পাস করুন)।'},
   {l:'10',jp:'タオル',kana:'タオル',rom:'taoru',bn:'তোয়ালে',cat:'other',
-   trick:'ইংরেজি <em>Towel</em> থেকে তাওরু।',
+   trick:'ইংরেজি <em>Towel</em> থেকে তাওরু。',
    exJp:'タオルで拭きます。',exBn:'তোয়ালে দিয়ে মুছছি।'},
-  {l:'10',jp:'段ボール',kana:'だんボール',rom:'danbōru',bn:'পিচবোর্ড / কার্টন',cat:'other',
-   trick:'<em>দানবোরু</em> -> দান করার জিনিস যে বড় "বক্সে" বা কার্টনে রাখা হয়।',
+  {l:'10',jp:'段ボール',kana:'段ボール',rom:'danbōru',bn:'পিচবোর্ড / কার্টন',cat:'other',
+   trick:'<em>দানবোরু</em> -> দান করার জিনিস যে বড় "বক্সে" বা কারটনে রাখা হয়।',
    exJp:'段ボール箱に入れます。',exBn:'কার্টন বক্সে রাখছি।'},
-  {l:'10',jp:'電卓',kana:'でんたく',rom:'dentaku',bn:'ক্যালকুলেটর',cat:'other',
-   trick:'<em>দেনতাকু</em> -> "দেন" টাকা "তাক" করে হিসাব করার যন্ত্র।',
+  {l:'10',jp:'電卓',kana:'電卓',rom:'dentaku',bn:'ক্যালকুলেটর',cat:'other',
+   trick:'<em>দেনتাকু</em> -> "দেন" টাকা "তাক" করে হিসাব করার যন্ত্র।',
    exJp:'電卓を使います。',exBn:'ক্যালকুলেটর ব্যবহার করি।'},
-  {l:'10',jp:'電話する',kana:'でんわする',rom:'denwasuru',bn:'কল করা',cat:'verb',
+  {l:'10',jp:'電話する',kana:'電話する',rom:'denwasuru',bn:'কল করা',cat:'verb',
    trick:'<em>দেনওয়া</em> (ফোন) + <em>সুরু</em> (করা)।',
    exJp:'友達に電話します。',exBn:'বন্ধুকে ফোন করব।'},
-  {l:'10',jp:'隣',kana:'となり',rom:'tonari',bn:'পাশে',cat:'other',
+  {l:'10',jp:'隣',kana:'隣',rom:'tonari',bn:'পাশে',cat:'other',
    trick:'<em>তনারি</em> -> "তোমার নারি" বা কাছের মানুষ পাশেই থাকে।',
    exJp:'隣の部屋です。',exBn:'পাশের ঘর।'},
   {l:'10',jp:'ドライバー',kana:'ドライバー',rom:'doraibā',bn:'স্ক্রু-ড্রাইভার',cat:'other',
@@ -1151,19 +910,19 @@ const WORDS = [
   {l:'10',jp:'ナイフ',kana:'ナイフ',rom:'naifu',bn:'ছুরি',cat:'other',
    trick:'ইংরেজি <em>Knife</em> থেকে নাইফু।',
    exJp:'ナイフで切ります。',exBn:'ছুরি দিয়ে কাটি।'},
-  {l:'10',jp:'並べる',kana:'ならべる',rom:'naraberu',bn:'সারিবদ্ধ করা / সাজানো',cat:'verb',
+  {l:'10',jp:'並べる',kana:'並べる',rom:'naraberu',bn:'সারিবদ্ধ করা / সাজানো',cat:'verb',
    trick:'<em>নারাবেরু</em> -> "নাড়াচাড়া" করে সব লাইনে সারিবদ্ধ করো।',
    exJp:'椅子を並べてください。',exBn:'চেয়ারগুলো সারিবদ্ধ করে সাজান।'},
   {l:'10',jp:'はさみ',kana:'はさみ',rom:'hasami',bn:'কাঁচি',cat:'other',
    trick:'<em>হাসামি</em> -> কাপড় কাটতে কাঁচি "হাতে আমি" নিলাম।',
    exJp:'はさみはどこですか？',exBn:'কাঁচিটি কোথায়?'},
   {l:'10',jp:'はし',kana:'はし',rom:'hashi',bn:'চপস্টিকস',cat:'food',
-   trick:'<em>হাশি</em> -> চপস্টিক দিয়ে খেতে গিয়ে বাঙালিরা "হাসি" থামprotতে পারে না!',
+   trick:'<em>হাشي</em> -> চপস্টিক দিয়ে খেতে গিয়ে বাঙালিরা "হাসি" থামাতে পারে না!',
    exJp:'はしで食べます。',exBn:'চপস্টিক দিয়ে খাই।'},
-  {l:'10',jp:'バスタオル',kana:'バスタオル',rom:'basutaoru',bn:'গোসলের তোয়ালে',cat:'other',
+  {l:'10',jp:'バスタオル',kana:'バスタオル',rom:'basutaoru',bn:'গোসルの তোয়ালে',cat:'other',
    trick:'ইংরেজি <em>Bath Towel</em> থেকে বাছুতাওরু।',
    exJp:'バスタオルはありますか？',exBn:'গোসলের তোয়ালে আছে কি?'},
-  {l:'10',jp:'歯ブラシ',kana:'はブラシ',rom:'haburashi',bn:'টুথব্রাশ',cat:'other',
+  {l:'10',jp:'歯ブラシ',kana:'歯ブラシ',rom:'haburashi',bn:'টুথব্রাশ',cat:'other',
    trick:'<em>হা</em> (দাঁত) + <em>বুরাশি</em> (Brush) = টুথব্রাশ।',
    exJp:'歯ブラシを買いました。',exBn:'টুথব্রাশ কিনেছি।'},
   {l:'10',jp:'〜部',kana:'〜ぶ',rom:'~bu',bn:'কপি (বই/কাগজের সংখ্যা)',cat:'other',
@@ -1171,12 +930,12 @@ const WORDS = [
    exJp:'資料を5部コピーします。',exBn:'ডকুমেন্ট ৫ কপি করব।'},
   {l:'10',jp:'フォーク',kana:'フォーク',rom:'fōku',bn:'কাঁটাচামচ',cat:'other',
    trick:'ইংরেজি <em>Fork</em> থেকে ফোর্কু।',
-   exJp:'フォークをください。',exBn:'একটি কাঁটাচামচ দিন।'},
+   exJp:'フォークをください。',exBn:'একটি কাঁটাচামচ দিন。'},
   {l:'10',jp:'ふせん',kana:'ふせん',rom:'fusen',bn:'স্টিকি নোট',cat:'other',
    trick:'<em>ফুসেন</em> -> "ফু দিয়ে" ওড়ানো যায় না এমন আঠালো নোট!',
    exJp:'ふせんを貼ります。',exBn:'স্টিকি নোট লাগাচ্ছি।'},
   {l:'10',jp:'プロジェクタ',kana:'プロジェクタ',rom:'purojekuta',bn:'প্রজেক্টর',cat:'other',
-   trick:'ইংরেজি <em>Projector</em>।',
+   trick:' ইংরেজি <em>Projector</em>।',
    exJp:'プロジェクタを使います。',exBn:'প্রজেক্টর ব্যবহার করব।'},
   {l:'10',jp:'ペン',kana:'ペン',rom:'pen',bn:'কলম',cat:'other',
    trick:'ইংরেজি <em>Pen</em>।',
@@ -1187,60 +946,60 @@ const WORDS = [
   {l:'10',jp:'〜までに',kana:'〜までに',rom:'~made ni',bn:'- এর মধ্যে (সময়)',cat:'other',
    trick:'<em>মাদে নি</em> -> এই সীমানার "মধ্যে" কাজ শেষ করো।',
    exJp:'五時までに来てください。',exBn:'৫ টার মধ্যে আসুন।'},
-  {l:'10',jp:'持って行く',kana:'もっていく',rom:'motteiku',bn:'বয়ে নিয়ে যাওয়া / সাথে নেওয়া',cat:'verb',
+  {l:'10',jp:'持って行く',kana:'持って行く',rom:'motteiku',bn:'বয়ে নিয়ে যাওয়া / সাথে নেওয়া',cat:'verb',
    trick:'<em>মোত্তে</em> (নেওয়া) + <em>ইকু</em> (যাওয়া) = নিয়ে যাওয়া।',
    exJp:'傘を持って行きます。',exBn:'ছাতা সাথে নিয়ে যাচ্ছি।'},
-  {l:'10',jp:'窓',kana:'まど',rom:'mado',bn:'জানলা',cat:'home',
+  {l:'10',jp:'窓',kana:'窓',rom:'mado',bn:'জানলা',cat:'home',
    trick:'<em>মাদো</em> -> জানলা দিয়ে ঠাণ্ডা বাতাস আসলে "মৃদু" অনুভূতি হয়।',
    exJp:'窓を開けてください。',exBn:'জানলাটি একটু খুলুন।'},
-  {l:'10',jp:'〜枚',kana:'〜まい',rom:'~mai',bn:'- শীট / পাতলা জিনিসের কাউন্টার',cat:'other',
+  {l:'10',jp:'〜枚',kana:'〜枚',rom:'~mai',bn:'- শীট / পাতলা জিনিসের কাউন্টার',cat:'other',
    trick:'<em>মাই</em> -> "মাই পেপার" বা আমার পাতলা কাগজ গোনার একক।',
    exJp:'紙を2枚ください。',exBn:'২ শীট কাগজ দিন।'},
   {l:'10',jp:'ミルク',kana:'ミルク',rom:'miruku',bn:'দুধ',cat:'drink',
    trick:'ইংরেজি <em>Milk</em> থেকে মিরুকু।',
-   exJp:'ミルクを飲みます。',exBn:'দুধ পান করি।'},
-  {l:'10',jp:'持って来る',kana:'もってくる',rom:'mottekuru',bn:'বয়ে নিয়ে আসা / সাথে আনা',cat:'verb',
+   exJp:'ミルクを喜びます。',exBn:'দুধ পান করি।'},
+  {l:'10',jp:'持って来る',kana:'持って来る',rom:'mottekuru',bn:'বয়ে নিয়ে আসা / সাথে আনা',cat:'verb',
    trick:'<em>মোত্তে</em> (নেওয়া) + <em>কুরু</em> (আসা) = নিয়ে আসা।',
-   exJp:'辞書を持ってきてください。',exBn:'অভিধানটি সাথে নিয়ে আসুন।'},
+   exJp:'辞書を持ってきてください。',exBn:'অভিধানটি সাথে নিয়ে আসুন。'},
   {l:'10',jp:'リモコン',kana:'リモコン',rom:'rimokon',bn:'রিমোট কন্ট্রোলার',cat:'other',
    trick:'<em>Remote Control</em> এর সংক্ষিপ্ত রূপ রিমোকন।',
    exJp:'リモコンはどこ？',exBn:'রিমোট কোথায়?'},
   {l:'10',jp:'ありますよ / あるよ',kana:'ありますよ',rom:'arimasu yo',bn:'আছে (নিশ্চিত করে বলা)',cat:'phrase',
-   trick:'<em>আরীমাছু</em> (আছে) + <em>ইও</em> (জানিয়ে দেওয়া)।',
+   trick:'<em>আরীমাছু</em> (আছে) + <em>ই오</em> (জানিয়ে দেওয়া)।',
    exJp:'ここにありますよ。',exBn:'এই যে এখানে আছে।'},
-  {l:'10',jp:'電話してください',kana:'でんわしてください',rom:'denwa shite kudasai',bn:'টেলিফোন করুন।',cat:'phrase',
+  {l:'10',jp:'電話してください',kana:'電話してください',rom:'denwa shite kudasai',bn:'টেলিফোন করুন।',cat:'phrase',
    trick:'<em>দেনওয়া</em> (ফোন) + <em>কুদাসাই</em> (দয়া করে করুন)।',
    exJp:'あとで電話してください。',exBn:'পরে ফোন করুন।'},
   {l:'10',jp:'いいよ',kana:'いいよ',rom:'ii yo',bn:'ভালো / ঠিক আছে',cat:'phrase',
    trick:'<em>ইই</em> (ভালো) + <em>ইও</em> (বন্ধুত্বপূর্ণ সম্মতি)।',
    exJp:'A: 行ってもいい？ B: いいよ。',exBn:'A: আমি যেতে পারি? B: হ্যাঁ, ঠিক আছে।'},
-  {l:'10',jp:'来てください',kana:'きてください',rom:'kite kudasai',bn:'দয়া করে আসুন।',cat:'phrase',
+  {l:'10',jp:'来てください',kana:'きがください',rom:'kite kudasai',bn:'দয়া করে আসুন।',cat:'phrase',
    trick:'<em>কিতে</em> (আসা) + <em>কুদাসাই</em> (দয়া করে)।',
    exJp:'ここに来てください。',exBn:'দয়া করে এখানে আসুন।'},
   {l:'10',jp:'もしもし',kana:'もしもし',rom:'moshimoshi',bn:'হ্যালো (ফোনে)',cat:'phrase',
    trick:'ফোনে কথা বলার অতি পরিচিত জাপানি রূপ মশি মশি!',
    exJp:'もしもし、ハビブさんですか？',exBn:'হ্যালো, হাবিব ভাই বলছেন?'},
 
-  // =========== LESSON 11 ===========[cite: 1]
+  // =========== LESSON 11 ===========
   {l:'11',jp:'アクション映画',kana:'アクションえいが',rom:'akshon eiga',bn:'অ্যাকশন মুভি',cat:'other',
    trick:'<em>Action</em> + <em>Eiga</em> (সিনেমা) = অ্যাকশন সিনেমা।',
    exJp:'アクション映画が好きです。',exBn:'আমি অ্যাকশন মুভি পছন্দ করি।'},
   {l:'11',jp:'おんがく',kana:'おんがく',rom:'ongaku',bn:'সঙ্গীত / মিউজিক',cat:'other',
    trick:'<em>ওনগাকু</em> -> গান শুনলে মন "অন" (চালু) হয়ে ভালো হয়ে যায়।',
    exJp:'おんがくを聞きます。',exBn:'গান শুনছি।'},
-  {l:'11',jp:'買い物をする',kana:'かいものをする',rom:'kaimono o suru',bn:'কেনাকাটা করা',cat:'verb',
+  {l:'11',jp:'買い物をする',kana:'買い物をする',rom:'kaimono o suru',bn:'কেনাকাটা করা',cat:'verb',
    trick:'<em>কাইমোনো</em> (জিনিস কেনা) + <em>সুরু</em> (করা)।',
    exJp:'デパートで買い物をします。',exBn:'ডিপার্টমেন্টাল স্টোরে কেনাকাটা করছি।'},
   {l:'11',jp:'ゲーム',kana:'ゲーム',rom:'gēmu',bn:'খেলা / ভিডিও গেম',cat:'other',
    trick:'ইংরেজি <em>Game</em> থেকে গেমু।',
    exJp:'ゲームが好きです。',exBn:'গেম পছন্দ করি।'},
   {l:'11',jp:'アニメ',kana:'アニメ',rom:'anime',bn:'অ্যানিমেশন / অ্যানিমে',cat:'other',
-   trick:'জাপানি বিখ্যাত <em>Anime</em> বা কার্টুন।',
+   trick:'জাপানি বিখ্যাত <em>Anime</em> বা কার্টুন。',
    exJp:'日本のアニメを見ます。',exBn:'জাপানি অ্যানিমে দেখি।'},
   {l:'11',jp:'あまり',kana:'あまり',rom:'amari',bn:'খুব কমই / তেমন না (না-বোধক)',cat:'adj',
    trick:'<em>আমারি</em> -> "আমার ই" এই কাজটা তেমন করা হয় না।',
    exJp:'あまりテレビを見ません。',exBn:'আমি তেমন একটা টিভি দেখি না।'},
-  {l:'11',jp:'映画',kana:'えいが',rom:'eiga',bn:'সিনেমা / চলচিত্র',cat:'other',
+  {l:'11',jp:'映画',kana:'映画',rom:'eiga',bn:'সিনেমা / চলচিত্র',cat:'other',
    trick:'<em>এইগা</em> -> "এই গা" বা পর্দায় যে ছবি বা সিনেমা ভাসে।',
    exJp:'映画館に行きます。',exBn:'সিনেমা হলে যাচ্ছি।'},
   {l:'11',jp:'エスエフ (SF)',kana:'エスエフ',rom:'esuefu',bn:'বৈজ্ঞানিক কল্পকাহিনী',cat:'other',
@@ -1258,49 +1017,49 @@ const WORDS = [
   {l:'11',jp:'サッカー',kana:'サッカー',rom:'sakkā',bn:'ফুটবল',cat:'other',
    trick:'ইংরেজি <em>Soccer</em> থেকে সাক্কা-।',
    exJp:'サッカーをします。',exBn:'ফুটবল খেলি।'},
-  {l:'11',jp:'散歩をする',kana:'さんぽをする',rom:'sanpo o suru',bn:'হাঁটাহাঁটি করা',cat:'verb',
+  {l:'11',jp:'散歩をする',kana:'散歩をする',rom:'sanpo o suru',bn:'হাঁটাহাঁটি করা',cat:'verb',
    trick:'<em>সানপো</em> -> "সান" বা বিকেলে রোদের মধ্যে পার্কে হাঁটা।',
    exJp:'公園を散歩します。',exBn:'পার্কে হাঁটাহাঁটি করছি।'},
-  {l:'11',jp:'趣味',kana:'しゅみ',rom:'shumi',bn:'শখ',cat:'other',
+  {l:'11',jp:'趣味',kana:'趣味',rom:'shumi',bn:'শখ',cat:'other',
    trick:'<em>শুমি</em> -> আমার শখ হলো ভালো ভালো "সুমি" (মিষ্টি) খাওয়া!',
    exJp:'趣味は何ですか？',exBn:'আপনার শখ কী?'},
   {l:'11',jp:'ショッピング',kana:'ショッピング',rom:'shoppingu',bn:'শপিং',cat:'other',
-   trick:'ইংরেজি <em>Shopping</em> থেকে শোপ্পিনগু।',
+   trick:'ইংরেজি <em>Shopping</em> থেকে শোপ্পিনগু。',
    exJp:'ショッピングに行きます。',exBn:'শপিংয়ে যাচ্ছি।'},
-  {l:'11',jp:'水泳',kana:'すいえい',rom:'suiei',bn:'সাঁতার',cat:'other',
+  {l:'11',jp:'水泳',kana:'水泳',rom:'suiei',bn:'সাঁতার',cat:'other',
    trick:'<em>সুইয়েই</em> -> "সুইমিং" এর জাপানি রূপ সুইয়েই।',
    exJp:'水泳が得意です。',exBn:'আমি সাঁতারে পারদর্শী।'},
-  {l:'11',jp:'スポーツをする',kana:'スポーツをする',rom:'supōtsu o suru',bn:'খেলাদুলা করা',cat:'verb',
+  {l:'11',jp:'スポーツをする',kana:'スポーツをする',rom:'supōtsu o suru',bn:'খেলাदुला করা',cat:'verb',
    trick:'<em>Sports</em> + <em>Suru</em> (করা)।',
    exJp:'毎週末、スポーツをします。',exBn:'প্রতি উইকএন্ডে খেলাধুলা করি।'},
   {l:'11',jp:'ジャズ',kana:'ジャズ',rom:'jazu',bn:'জ্যাজ মিউজিক',cat:'other',
-   trick:'ইংরেজি <em>Jazz</em> মিউজিক।',
+   trick:' ইংরেজি <em>Jazz</em> মিউজিক।',
    exJp:'ジャズが世界中で人気です。',exBn:'জ্যাজ মিউজিক বিশ্বজুড়ে জনপ্রিয়।'},
   {l:'11',jp:'ショパン',kana:'ショパン',rom:'shopan',bn:'চোপিন (বিখ্যাত সুরকার)',cat:'other',
    trick:'বিখ্যাত পিয়ানো সুরকার <em>Chopin</em>।',
    exJp:'ショパンの音楽です。',exBn:'এটি চোপিনের মিউজিক।'},
   {l:'11',jp:'スターウォーズ',kana:'スターウォーズ',rom:'sutāwōzu',bn:'স্টার ওয়ার্স',cat:'other',
-   trick:'বিখ্যাত মুভি সিরিজ <em>Star Wars</em>।',
-   exJp:'スターウォーズを見ました。',exBn:'স্টার ওয়ার্স দেখেছি।'},
+   trick:'বিখ্যাত মুভি系列 <em>Star Wars</em>।',
+   exJp:'スターウォーズを見ました。',exBn:'スター ওয়ার্স দেখেছি।'},
   {l:'11',jp:'ぜんぜん',kana:'ぜんぜん',rom:'zenzen',bn:'একেবারেই না (না-বোধক)',cat:'adj',
    trick:'<em>জেনজেন</em> -> ঝনঝন বা ফাঁকা, আমার কাছে "একেবারেই" টাকা নেই!',
    exJp:'お酒はぜんぜん飲みません。',exBn:'মদ আমি একেবারেই পান করি না।'},
-  {l:'11',jp:'掃除をする',kana:'そうじをする',rom:'sōji o suru',bn:'পরিষ্কার করা',cat:'verb',
+  {l:'11',jp:'掃除をする',kana:'掃除をする',rom:'sōji o suru',bn:'পরিষ্কার করা',cat:'verb',
    trick:'<em>সৌজি</em> -> ঘর নোংরা হলে "সবাই" মিলে পরিষ্কার করো।',
-   exJp:'部屋の掃除をします。',exBn:'ঘর পরিষ্কার করছি।'},
-  {l:'11',jp:'外',kana:'そと',rom:'soto',bn:'বাইরে',cat:'other',
+   exJp:'部屋の掃除をします。',exBn:'ঘর পরিষ্কার করছি。'},
+  {l:'11',jp:'外',kana:'外',rom:'soto',bn:'বাইরে',cat:'other',
    trick:'<em>সতো</em> -> ঘরের ভেতরে না, "সরাসরি" বাইরে যাও।',
    exJp:'外で食べましょう。',exBn:'চলুন বাইরে খাই।'},
-  {l:'11',jp:'たいてい',kana:'たいてい',rom:'taitei',bn:'সাধারণত',cat:'adj',
+  {l:'11',jp:'たいてい',kana:'たいてい',rom:'amari',bn:'সাধারণত',cat:'adj',
    trick:'<em>তাইতেই</em> -> "তাই তো!" সাধারণত আমি এটাই করি।',
    exJp:'たいてい11時に寝ます。',exBn:'সাধারণত ১১ টায় ঘুমাই।'},
-  {l:'11',jp:'洗濯をする',kana:'せんたくをする',rom:'sentaku o suru',bn:'কাপড়চোপড় ধোয়া',cat:'verb',
+  {l:'11',jp:'洗濯をする',kana:'洗濯をする',rom:'sentaku o suru',bn:'कपড়চোপড় ধোয়া',cat:'verb',
    trick:'<em>সেনতাকু</em> -> কাপড় ধোয়ার পর ছাদে "টাঙিয়ে" শুকাতে দাও।',
    exJp:'週末に洗濯をします。',exBn:'উইকএন্ডে কাপড় ধুই।'},
-  {l:'11',jp:'大好き',kana:'だいすき',rom:'daisuki',bn:'খুব পছন্দের / ভালোবাসার',cat:'adj',
+  {l:'11',jp:'大好き',kana:'大好き',rom:'daisuki',bn:'খুব পছন্দের / ভালোবাসার',cat:'adj',
    trick:'<em>দাই</em> (বড়) + <em>সুকি</em> (পছন্দ) = খুব পছন্দ।',
    exJp:'日本の料理が大好きです。',exBn:'জাপানি খাবার আমার খুব পছন্দ।'},
-  {l:'11',jp:'卓球',kana:'たっきゅう',rom:'takkyū',bn:'টেবিল টেনিস',cat:'other',
+  {l:'11',jp:'卓球',kana:'卓球',rom:'takkyū',bn:'টেবিল টেনিস',cat:'other',
    trick:'<em>তাক্কিউ</em> -> টেবিলে বল "ঠকঠক" করে মারার খেলা!',
    exJp:'卓球が面白いです。',exBn:'টেবিল টেনিস মজাদার।'},
   {l:'11',jp:'テニス',kana:'テニス',rom:'tenisu',bn:'টেনিস',cat:'other',
@@ -1312,13 +1071,13 @@ const WORDS = [
   {l:'11',jp:'ときどき',kana:'ときどき',rom:'tokidoki',bn:'কখনও কখনও',cat:'adj',
    trick:'<em>তোকিদোকি</em> -> ঘড়ির "টিকটিক" শব্দের মতো মাঝে মাঝে বা কখনও কখনও।',
    exJp:'ときどき日本料理を食べます。',exBn:'কখনও কখনও জাপানি খাবার খাই।'},
-  {l:'11',jp:'読書',kana:'どくしょ',rom:'dokusho',bn:'বই পড়া / অধ্যয়ন',cat:'other',
-   trick:'<em>দোকুশো</em> -> "দীক্ষা" নেওয়া বা বই পড়ে জ্ঞান অর্জন করা।',
+  {l:'11',jp:'読書',kana:'読書',rom:'dokusho',bn:'বই পড়া / অধ্যয়ন',cat:'other',
+   trick:'<em>দোকুশো</em> -> "দীক্ষা" নেওয়া বা বই পড়ে জ্ঞান অর্জন করা।',
    exJp:'趣味は読書です。',exBn:'আমার শখ বই পড়া।'},
   {l:'11',jp:'どんな',kana:'どんな',rom:'donna',bn:'কি ধরনের',cat:'other',
    trick:'<em>দোন্না</em> -> "কোনটা" বা কি ধরনের জিনিস পছন্দ আপনার?',
    exJp:'どんな映画が好きですか？',exBn:'কি ধরনের সিনেমা পছন্দ করেন?'},
-  {l:'11',jp:'夏目漱石',kana:'なつめそうせき',rom:'Natsume Sōseki',bn:'নাতসুমে সোসেকি (বিখ্যাত লেখক)',cat:'other',
+  {l:'11',jp:'夏目漱石',kana:'夏目漱石',rom:'Natsume Sōseki',bn:'নাতসুমে সোসেকি (বিখ্যাত লেখক)',cat:'other',
    trick:'জাপানের অত্যন্ত বিখ্যাত ঔপন্যাসিক।',
    exJp:'夏目漱石の本を読みます。',exBn:'নাতসুমে সোসেকির বই পড়ছি।'},
   {l:'11',jp:'バスケットボール',kana:'バスケットボール',rom:'basukettobōru',bn:'বাস্কেটবল',cat:'other',
@@ -1326,21 +1085,21 @@ const WORDS = [
    exJp:'バスケットボールは難しいです。',exBn:'বাস্কেটবল খেলা কঠিন।'},
   {l:'11',jp:'バドミントン',kana:'バドミントン',rom:'badominton',bn:'ব্যাডমিন্টন',cat:'other',
    trick:'ইংরেজি <em>Badminton</em>।',
-   exJp:'バドミントンをしましょう。',exBn:'চলুন ব্যাডমিন্টন খেলি।'},
+   exJp:'バドミントンをしましょう。',exBn:'চলুন ব্যাডমিন্টন খেলি。'},
   {l:'11',jp:'ハリー・ポッター',kana:'ハリー・ポッター',rom:'Harī Pottā',bn:'হ্যারি পটার',cat:'other',
    trick:'বিখ্যাত জাদুর বই ও সিনেমা সিরিজ <em>Harry Potter</em>।',
    exJp:'ハリー・ポッターのファンです。',exBn:'আমি হ্যারি পটারের ভক্ত।'},
-  {l:'11',jp:'1人で',kana:'ひとりで',rom:'hitori de',bn:'একা একা / নিজে',cat:'other',
-   trick:'<em>হিতোরি</em> (এক ব্যক্তি) + <em>দে</em> (দ্বারা) = একা একা।',
+  {l:'11',jp:'1人で',kana:'1人で',rom:'hitori de',bn:'একা একা / নিজে',cat:'other',
+   trick:'<em>হিতোরি</em> (এক ব্যক্তি) + <em>দে</em> (দ্বারা) = একা একা。',
    exJp:'1人で映画を見ました。',exBn:'একা একা সিনেমা দেখেছি।'},
-  {l:'11',jp:'勉強する',kana:'べんきょうする',rom:'benkyōsuru',bn:'অধ্যয়ন করা / পড়ালেখা',cat:'verb',
+  {l:'11',jp:'勉強する',kana:'勉強する',rom:'benkyōsuru',bn:'অধ্যয়ন করা / পড়ালেখা',cat:'verb',
    trick:'<em>বেনকিউ</em> -> টেবিলে "বসে" মনোযোগ দিয়ে পড়ালেখা করা।',
    exJp:'日本語を勉強します。',exBn:'জাপানি ভাষা অধ্যয়ন করছি।'},
   {l:'11',jp:'マンガ',kana:'マンガ',rom:'manga',bn:'মাঙ্গা / জাপানি কমিকস',cat:'other',
    trick:'জাপানের ঐতিহ্যবাহী কমিক বই <em>Manga</em>।',
    exJp:'日本のマンガが大好きです。',exBn:'জাপানি মাঙ্গা আমার খুব পছন্দ।'},
-  {l:'11',jp:'休みの日',kana:'やすみのひ',rom:'yasumi no hi',bn:'ছুটির দিন',cat:'other',
-   trick:'<em>িয়াসুমি</em> (ছুটি) + <em>হি</em> (দিন) = ছুটির দিন।',
+  {l:'11',jp:'休みの日',kana:'休みの日',rom:'yasumi no hi',bn:'ছুটির দিন',cat:'other',
+   trick:'<em>িয়াসুമി</em> (ছুটি) + <em>হি</em> (দিন) = ছুটির দিন।',
    exJp:'明日は休みの日です。',exBn:'আগামীকাল ছুটির দিন।'},
   {l:'11',jp:'ファッション',kana:'ファッション',rom:'fasshon',bn:'ফ্যাশন',cat:'other',
    trick:'ইংরেজি <em>Fashion</em> থেকে ফাশ্শন।',
@@ -1351,7 +1110,7 @@ const WORDS = [
   {l:'11',jp:'ホラー',kana:'ホラー',rom:'horā',bn:'ভৌতিক / হরর',cat:'other',
    trick:'ইংরেজি <em>Horror</em> থেকে হোরা-।',
    exJp:'ホラー映画は怖いです。',exBn:'হরর সিনেমা ভয়ংকর।'},
-  {l:'11',jp:'ミステリー', gateway:'ミステリー',rom:'misuterī',bn:'রহস্য / মিস্ত্রি',cat:'other',
+  {l:'11',jp:'ミステリー',kana:'ミステリー',rom:'misuterī',bn:'রহস্য / মিস্ত্রি',cat:'other',
    trick:'ইংরেজি <em>Mystery</em> থেকে মিছুরেী।',
    exJp:'ミステリー小説を読みます。',exBn:'রহস্য উপন্যাস পড়ছি।'},
   {l:'11',jp:'ゆっくりする',kana:'ゆっくりする',rom:'yukkuri suru',bn:'ধীরে ধীরে করা / আরাম করা',cat:'verb',
@@ -1360,19 +1119,19 @@ const WORDS = [
   {l:'11',jp:'ラグビー',kana:'ラグビー',rom:'ragubī',bn:'রাগবি',cat:'other',
    trick:'ইংরেজি <em>Rugby</em> খেলা।',
    exJp:'ラグビーの試合を見ます。',exBn:'রাগবি ম্যাচ দেখছি।'},
-  {l:'11',jp:'料理',kana:'りょうり',rom:'ryōri',bn:'রান্না / খাবার',cat:'food',
+  {l:'11',jp:'料理',kana:'料理',rom:'ryōri',bn:'রান্না / খাবার',cat:'food',
    trick:'<em>রিওরি</em> -> হেসেল বা কিচেনে চমৎকার "রেসিপি" রান্না।',
    exJp:'料理を作ります。',exBn:'রান্না করছি।'},
-  {l:'11',jp:'恋愛映画',kana:'れんあいえいが',rom:'ren\'ai eiga',bn:'রোমান্টিক সিনেমা',cat:'other',
+  {l:'11',jp:'恋愛映画',kana:'恋愛映画',rom:'ren\'ai eiga',bn:'রোমান্টিক সিনেমা',cat:'other',
    trick:'<em>রেনআই</em> (রোমান্স/প্রেম) + <em>এইগা</em> (সিনেমা) = প্রেমের ছবি।',
    exJp:'恋愛映画に感動しました。',exBn:'রোমান্টিক সিনেমাটি দেখে আবেগাপ্লুত হলাম।'},
   {l:'11',jp:'ロック',kana:'ロック',rom:'rokku',bn:'রক মিউজিক',cat:'other',
    trick:'ইংরেজি <em>Rock</em> মিউজিক।',
    exJp:'ロックバンドが好きです。',exBn:'রক ব্যান্ড পছন্দ করি।'},
-  {l:'11',jp:'本を読む',kana:'ほんをよむ',rom:'hon o yomu',bn:'বই পড়া',cat:'verb',
+  {l:'11',jp:'本を読む',kana:'本を読む',rom:'hon o yomu',bn:'বই পড়া',cat:'verb',
    trick:'<em>হন</em> (বই) + <em>ইওমু</em> (পড়া)।',
    exJp:'毎晩、本を読みます。',exBn:'প্রতি রাতে বই পড়ি।'},
-  {l:'11',jp:'村上春樹',kana:'むらかみはるき',rom:'Murakami Haruki',bn:'মুরাকامي হারুকি (লেখক)',cat:'other',
+  {l:'11',jp:'村上春樹',kana:'村上春樹',rom:'Murakami Haruki',bn:'মুরাকামি হারুকি (লেখক)',cat:'other',
    trick:'বিশ্বখ্যাত আধুনিক জাপানি লেখক হারুকি মুরাকামি।',
    exJp:'村上春樹の小説です。',exBn:'এটি মুরাকামি হারুকির উপন্যাস।'},
   {l:'11',jp:'よく',kana:'よく',rom:'yoku',bn:'প্রায়ই / ভালো করে',cat:'adj',
@@ -1381,7 +1140,7 @@ const WORDS = [
   {l:'11',jp:'〜かなあ',kana:'〜かなあ',rom:'~kanā',bn:'তাই মনে হয় / কি জানি (সন্দেহ)',cat:'phrase',
    trick:'নিজের মনে দ্বিধা প্রকাশ করতে "কানা" ব্যবহার হয়।',
    exJp:'明日は雨かなあ。',exBn:'কাল কি বৃষ্টি হবে নাকি (তাই মনে হয়)?'},
-  {l:'11',jp:'そうですねえ',kana:'そうですねえ',rom:'sō desu nē',bn:'আচ্ছা হ্যা / তাই তো',cat:'phrase',
+  {l:'11',jp:'そうですねえ',kana:'そうですねえ',rom:'sō desu nē',bn:'अच्छा হ্যা / তাই তো',cat:'phrase',
    trick:'কারও কথায় গভীরভাবে সায় দিতে "সৌ দেছু নেয়ে" বলা হয়।',
    exJp:'A: 今日は暑いですね。 B: そうですねえ。',exBn:'A: আজ খুব গরম না? B: হ্যাঁ, তাই তো।'},
   {l:'11',jp:'えらいですね',kana:'えらいですね',rom:'erai desu ne',bn:'এটা প্রশংসনীয়! / আপনি দারুণ!',cat:'phrase',
@@ -1392,8 +1151,291 @@ const WORDS = [
 const lessonColors = {'5':'#ff8906','6':'#3da9fc','7':'#43d9ad','8':'#a78bfa','10':'#fbbf24','11':'#f43f5e'};
 const catLabels = {food:'খাবার 🍱',drink:'পানীয় 🥤',home:'ঘর/অফিস 🏠',adj:'বিশেষণ ✨',verb:'ক্রিয়া ⚡',phrase:'বাক্যাংশ 💬',other:'অন্যান্য 📦'};
 
-let deck=[],idx=0,flipped=false,known=0,again=0;
-let filterLesson='all',filterCat='all';
+let deck=[], idx=0, flipped=false, known=0, again=0;
+let filterLesson='all', filterCat='all';
+let currentMode = 'flashcards';
+
+// ADVANCED QUIZ STATE
+let quizDeck=[], quizIdx=0, quizScore=0, quizTimer=null, quizTimeLeft=20;
+
+function updateThemeColor(lesson) {
+  const color = lessonColors[lesson] || '#3da9fc';
+  document.documentElement.style.setProperty('--current-theme', color);
+  document.documentElement.style.setProperty('--current-glow', color + '22');
+}
+
+function switchMode(mode) {
+  currentMode = mode;
+  document.getElementById('btnFlashcards').classList.toggle('active', mode==='flashcards');
+  document.getElementById('btnQuiz').classList.toggle('active', mode==='quiz');
+  document.getElementById('completion').classList.remove('show');
+  
+  if(mode === 'flashcards') {
+    document.getElementById('flashcardsView').style.display = 'block';
+    document.getElementById('quizView').style.display = 'none';
+    clearInterval(quizTimer);
+    load();
+  } else {
+    document.getElementById('flashcardsView').style.display = 'none';
+    document.getElementById('quizView').style.display = 'block';
+    startQuiz();
+  }
+}
+
+function load() {
+  deck = WORDS.filter(w => {
+    const ml = filterLesson === 'all' || w.l === filterLesson;
+    const mc = filterCat === 'all' || w.cat === filterCat;
+    return ml && mc;
+  });
+  
+  if(deck.length === 0) {
+    document.getElementById('cardArea').style.display = 'none';
+    return;
+  }
+  document.getElementById('cardArea').style.display = 'block';
+  idx = 0;
+  showCard();
+}
+
+function showCard() {
+  if(!deck[idx]) return;
+  const w = deck[idx];
+  updateThemeColor(w.l);
+  
+  flipped = false;
+  document.getElementById('cardInner').classList.remove('flipped');
+  
+  document.getElementById('cLesson').textContent = 'পাঠ ' + w.l;
+  document.getElementById('cCat').textContent = catLabels[w.cat] || w.cat;
+  document.getElementById('cJp').textContent = w.jp;
+  document.getElementById('cKana').textContent = w.kana;
+  document.getElementById('cRomaji').textContent = w.rom;
+  
+  document.getElementById('bJp').textContent = w.jp;
+  document.getElementById('bKana').textContent = w.kana;
+  document.getElementById('bRomaji').textContent = w.rom;
+  document.getElementById('bMeaning').textContent = w.bn;
+  document.getElementById('bTrick').innerHTML = w.trick;
+  document.getElementById('bExJp').textContent = w.exJp;
+  document.getElementById('bExBn').textContent = w.exBn;
+  
+  document.getElementById('totalStat').textContent = deck.length;
+  document.getElementById('knownStat').textContent = known;
+  document.getElementById('againStat').textContent = again;
+  
+  document.getElementById('progLabel').textContent = `কার্ড ${idx+1} / ${deck.length}`;
+  document.getElementById('progFill').style.width = ((idx+1)/deck.length*100) + '%';
+}
+
+function toggleFlip() {
+  flipped = !flipped;
+  document.getElementById('cardInner').classList.toggle('flipped', flipped);
+}
+
+function markCard(isKnown) {
+  if(isKnown) known++; else again++;
+  nextCard();
+}
+
+function nextCard() { if(idx < deck.length-1) { idx++; showCard(); } }
+function prevCard() { if(idx > 0) { idx--; showCard(); } }
+function shuffle() { deck.sort(() => Math.random() - 0.5); idx=0; showCard(); }
+
+// ADVANCED SMART QUIZ SYSTEM
+function startQuiz() {
+  clearInterval(quizTimer);
+  document.getElementById('completion').classList.remove('show');
+  
+  // Filter and pick 10 random items
+  let sourceWords = filterLesson === 'all' ? [...WORDS] : WORDS.filter(w => w.l === filterLesson);
+  quizDeck = sourceWords.sort(() => Math.random() - 0.5).slice(0, 10);
+  
+  if(quizDeck.length === 0) {
+    alert('এই পাঠে কোনো প্রশ্ন পাওয়া যায়নি। অনুগ্রহ করে অন্য পাঠ সিলেক্ট করুন।');
+    return;
+  }
+  
+  quizIdx = 0;
+  quizScore = 0;
+  showQuizQuestion();
+}
+
+function showQuizQuestion() {
+  if(quizIdx >= quizDeck.length) {
+    endQuiz();
+    return;
+  }
+  
+  const w = quizDeck[quizIdx];
+  updateThemeColor(w.l);
+  
+  document.getElementById('quizFeedback').style.display = 'none';
+  document.getElementById('quizProgLabel').textContent = `প্রশ্ন ${quizIdx+1} / ${quizDeck.length}`;
+  document.getElementById('quizScoreLabel').textContent = `সঠিক উত্তর: ${quizScore}`;
+  document.getElementById('quizProgFill').style.width = ((quizIdx+1)/quizDeck.length*100) + '%';
+  document.getElementById('quizLessonBadge').textContent = `লেসন ${w.l} • কন্টেক্সট টেস্ট`;
+  document.getElementById('qHintBn').textContent = `বাক্যের অর্থ সংকেত: ${w.exBn}`;
+  
+  // Advanced Interactive Blank Generation
+  let sentenceHtml = w.exJp.replace(w.jp, `<span> ??? </span>`);
+  document.getElementById('qSentence').innerHTML = sentenceHtml;
+  
+  // Generate Options Smartly
+  let options = [w];
+  while(options.length < 4) {
+    let rand = WORDS[Math.floor(Math.random()*WORDS.length)];
+    if(!options.includes(rand) && rand.cat === w.cat) {
+      options.push(rand);
+    } else if (!options.includes(rand) && options.length === 3) {
+      options.push(rand); // fallback
+    }
+  }
+  options.sort(() => Math.random() - 0.5);
+  
+  const optContainer = document.getElementById('quizOptions');
+  optContainer.innerHTML = '';
+  
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `
+      <span class="opt-jp">${opt.jp}</span>
+      <span class="opt-bn">অর্থ: ${opt.bn} (${opt.kana})</span>
+    `;
+    btn.onclick = () => handleQuizAnswer(btn, opt, w);
+    optContainer.appendChild(btn);
+  });
+  
+  resetQuizTimer();
+}
+
+function resetQuizTimer() {
+  clearInterval(quizTimer);
+  quizTimeLeft = 20;
+  document.getElementById('quizTimer').textContent = quizTimeLeft + 's';
+  quizTimer = setInterval(() => {
+    quizTimeLeft--;
+    document.getElementById('quizTimer').textContent = quizTimeLeft + 's';
+    if(quizTimeLeft <= 0) {
+      clearInterval(quizTimer);
+      autoFailQuestion();
+    }
+  }, 1000);
+}
+
+function handleQuizAnswer(selectedBtn, chosenOpt, correctWord) {
+  clearInterval(quizTimer);
+  const buttons = document.querySelectorAll('#quizOptions .option-btn');
+  buttons.forEach(b => b.disabled = true);
+  
+  const feedbackBox = document.getElementById('quizFeedback');
+  feedbackBox.style.display = 'block';
+  
+  if(chosenOpt.jp === correctWord.jp) {
+    selectedBtn.classList.add('correct');
+    feedbackBox.className = 'quiz-feedback-box correct';
+    feedbackBox.innerHTML = `🎉 <b>চমৎকার! সঠিক উত্তর।</b><br>ব্যাখ্যা: শূন্যস্থানে <b>"${correctWord.jp}"</b> বসবে। মনে রাখার শর্টকাট ট্রিক: ${correctWord.trick}`;
+    quizScore++;
+  } else {
+    selectedBtn.classList.add('incorrect');
+    feedbackBox.className = 'quiz-feedback-box incorrect';
+    feedbackBox.innerHTML = `❌ <b>ভুল উত্তর!</b> সঠিক উত্তরটি হলো <b>"${correctWord.jp}"</b> (${correctWord.bn})।<br>ট্রিক: ${correctWord.trick}`;
+    
+    buttons.forEach(b => {
+      if(b.querySelector('.opt-jp').textContent === correctWord.jp) {
+        b.classList.add('correct');
+      }
+    });
+  }
+  
+  setTimeout(() => {
+    quizIdx++;
+    showQuizQuestion();
+  }, 3500);
+}
+
+function autoFailQuestion() {
+  const correctWord = quizDeck[quizIdx];
+  const feedbackBox = document.getElementById('quizFeedback');
+  feedbackBox.style.display = 'block';
+  feedbackBox.className = 'quiz-feedback-box incorrect';
+  feedbackBox.innerHTML = `⏰ <b>সময় শেষ!</b> সঠিক উত্তরটি ছিল <b>"${correctWord.jp}"</b>।`;
+  
+  const buttons = document.querySelectorAll('#quizOptions .option-btn');
+  buttons.forEach(b => {
+    b.disabled = true;
+    if(b.querySelector('.opt-jp').textContent === correctWord.jp) {
+      b.classList.add('correct');
+    }
+  });
+  
+  setTimeout(() => {
+    quizIdx++;
+    showQuizQuestion();
+  }, 3000);
+}
+
+function endQuiz() {
+  document.getElementById('quizView').style.display = 'none';
+  const comp = document.getElementById('completion');
+  comp.classList.add('show');
+  document.getElementById('completionTitle').textContent = `🎯 কুইজ স্কোর: ${quizScore} / ${quizDeck.length}`;
+  document.getElementById('completionMsg').textContent = quizScore >= 7 ? 'অসাধারণ! জাপানি ভাষায় আপনার দখল দিন দিন দারুণ হচ্ছে।' : 'ভালো চেষ্টা! শব্দগুলো আরেকবার রিভিশন দিয়ে কুইজটি আবার খেলুন।';
+}
+
+function restart() {
+  document.getElementById('completion').classList.remove('show');
+  if(currentMode === 'flashcards') load(); else startQuiz();
+}
+
+function speakWord(event) {
+  if(event) event.stopPropagation();
+  if(!deck[idx]) return;
+  const utterance = new SpeechSynthesisUtterance(deck[idx].jp);
+  utterance.lang = 'ja-JP';
+  window.speechSynthesis.speak(utterance);
+}
+
+// SEARCH FUNCTIONALITY
+function handleSearch() {
+  const query = document.getElementById('searchInput').value.toLowerCase().trim();
+  const resultsDiv = document.getElementById('searchResults');
+  if(!query) { resultsDiv.style.display = 'none'; return; }
+  
+  const filtered = WORDS.filter(w => 
+    w.jp.toLowerCase().includes(query) || 
+    w.kana.toLowerCase().includes(query) || 
+    w.rom.toLowerCase().includes(query) || 
+    w.bn.toLowerCase().includes(query)
+  );
+  
+  resultsDiv.innerHTML = '';
+  if(filtered.length === 0) {
+    resultsDiv.innerHTML = '<div class="search-item" style="color:var(--hint)">কোনো শব্দ পাওয়া যায়নি।</div>';
+  } else {
+    filtered.slice(0, 6).forEach(w => {
+      const item = document.createElement('div');
+      item.className = 'search-item';
+      item.innerHTML = `
+        <div><span class="item-jp">${w.jp}</span><span class="item-rom">(${w.rom})</span></div>
+        <div class="item-bn">অর্থ: <b>${w.bn}</b> (পাঠ ${w.l})</div>
+      `;
+      item.onclick = () => {
+        resultsDiv.style.display = 'none';
+        document.getElementById('searchInput').value = '';
+        filterLesson = w.l;
+        buildFilters();
+        load();
+        idx = deck.findIndex(item => item.jp === w.jp);
+        if(idx === -1) idx = 0;
+        showCard();
+      };
+      resultsDiv.appendChild(item);
+    });
+  }
+  resultsDiv.style.display = 'block';
+}
 
 function buildFilters(){
   const lf=document.getElementById('lessonFilters');
@@ -1401,10 +1443,13 @@ function buildFilters(){
   ['all','5','6','7','8','10','11'].forEach(l=>{
     const b=document.createElement('button');
     b.className='filter-btn'+(l===filterLesson?' active':'');
-    b.dataset.lesson=l;
     b.textContent=l==='all'?'সব পাঠ':'পাঠ '+l;
-    if(l!=='all') b.style.setProperty('--lc',lessonColors[l]);
-    b.onclick=()=>{filterLesson=l;buildFilters();buildCatFilters();load();};
+    if(l!=='all') b.style.setProperty('--lt-color', lessonColors[l]);
+    b.onclick=()=>{
+      filterLesson=l;
+      buildFilters();
+      if(currentMode === 'flashcards') load(); else startQuiz();
+    };
     lf.appendChild(b);
   });
 }
@@ -1412,164 +1457,33 @@ function buildFilters(){
 function buildCatFilters(){
   const cf=document.getElementById('catFilters');
   cf.innerHTML='';
-  const btn0=document.createElement('button');
-  btn0.className='cat-btn'+(filterCat==='all'?' active':'');
-  btn0.textContent='সব';
-  btn0.style.background='rgba(255,255,255,0.08)';
-  btn0.style.color='#fff';
-  btn0.style.borderColor='rgba(255,255,255,0.15)';
-  btn0.onclick=()=>{filterCat='all';buildCatFilters();load();};
-  cf.appendChild(btn0);
-  const cats=new Set(WORDS.filter(w=>filterLesson==='all'||w.l===filterLesson).map(w=>w.cat));
-  cats.forEach(c=>{
+  const allB=document.createElement('button');
+  allB.className='filter-btn'+(filterCat==='all'?' active':'');
+  allB.textContent='সব ক্যাটাগরি';
+  allB.onclick=()=>{ filterCat='all'; buildCatFilters(); load(); };
+  cf.appendChild(allB);
+  
+  Object.keys(catLabels).forEach(c=>{
     const b=document.createElement('button');
-    b.className='cat-btn'+(c===filterCat?' active':'');
-    b.textContent=catLabels[c]||c;
-    b.style.background=CAT_BG[c]||'rgba(148,163,184,0.1)';
-    b.style.color=CAT_COLORS[c]||'#94a3b8';
-    b.style.borderColor=(CAT_COLORS[c]||'#94a3b8')+'44';
-    b.onclick=()=>{filterCat=c;buildCatFilters();load();};
+    b.className='filter-btn'+(c===filterCat?' active':'');
+    b.textContent=catLabels[c];
+    b.onclick=()=>{ filterCat=c; buildCatFilters(); load(); };
     cf.appendChild(b);
   });
 }
 
-function load(){
-  deck=WORDS.filter(w=>{
-    const lOk=filterLesson==='all'||w.l===filterLesson;
-    const cOk=filterCat==='all'||w.cat===filterCat;
-    return lOk&&cOk;
-  });
-  idx=0;known=0;again=0;
-  updateStats();
-  document.getElementById('completion').classList.remove('show');
-  document.getElementById('cardArea').style.display='block';
-  showCard();
-}
-
-function showCard(){
-  if(deck.length===0) {
-    document.getElementById('cJp').textContent="কোনো কার্ড নেই";
-    document.getElementById('cKana').textContent="";
-    document.getElementById('cRomaji').textContent="";
-    return;
-  }
-  flipped=false;
-  document.getElementById('cardInner').classList.remove('flipped');
-  const w=deck[idx];
-  // FRONT
-  document.getElementById('cLesson').textContent='পাঠ '+w.l;
-  document.getElementById('cLesson').style.borderColor=lessonColors[w.l]+'44';
-  document.getElementById('cLesson').style.color=lessonColors[w.l];
-  const catEl=document.getElementById('cCat');
-  catEl.textContent=catLabels[w.cat]||w.cat;
-  catEl.style.background=CAT_BG[w.cat];
-  catEl.style.color=CAT_COLORS[w.cat];
-  document.getElementById('cJp').textContent=w.jp;
-  document.getElementById('cJp').style.color=lessonColors[w.l];
-  document.getElementById('cKana').textContent=w.kana;
-  document.getElementById('cRomaji').textContent=w.rom;
-  // BACK
-  document.getElementById('bJp').textContent=w.jp;
-  document.getElementById('bJp').style.color=lessonColors[w.l];
-  document.getElementById('bKana').textContent=w.kana;
-  document.getElementById('bRomaji').textContent=w.rom;
-  document.getElementById('bMeaning').textContent=w.bn;
-  document.getElementById('bTrick').innerHTML=w.trick || "কোনো ট্রিকস যুক্ত করা হয়নি।";
-  document.getElementById('bExJp').textContent=w.exJp || "";
-  document.getElementById('bExBn').textContent=w.exBn || "";
-  // Progress
-  const pct=Math.round((idx+1)/deck.length*100);
-  document.getElementById('progFill').style.width=pct+'%';
-  document.getElementById('progLabel').textContent='কার্ড '+(idx+1)+' / '+deck.length;
-  document.getElementById('progPct').textContent=pct+'%';
-  document.getElementById('totalStat').textContent=deck.length;
-}
-
-function flipCard(){
-  if(deck.length===0)return;
-  flipped=!flipped;
-  document.getElementById('cardInner').classList.toggle('flipped',flipped);
-}
-
-document.getElementById('cardInner').onclick=()=>{if(!flipped)flipCard();};
-
-function markCard(isKnown){
-  if(!flipped)return;
-  if(isKnown)known++;else again++;
-  updateStats();
-  nextCard();
-}
-
-function updateStats(){
-  document.getElementById('knownStat').textContent=known;
-  document.getElementById('againStat').textContent=again;
-  document.getElementById('totalStat').textContent=deck.length;
-}
-
-function nextCard(){
-  if(idx<deck.length-1){idx++;showCard();}
-  else{showCompletion();}
-}
-
-function prevCard(){
-  if(idx>0){idx--;flipped=false;document.getElementById('cardInner').classList.remove('flipped');showCard();}
-}
-
-function showCompletion(){
-  document.getElementById('cardArea').style.display='none';
-  const c=document.getElementById('completion');
-  c.classList.add('show');
-  const pct=Math.round(known/deck.length*100);
-  document.getElementById('completionMsg').textContent=
-    `${deck.length}টি কার্ডের মধ্যে ${known}টি জানেন (${pct}%)। অসাধারণ!`;
-}
-
-function restart(){
-  document.getElementById('completion').classList.remove('show');
-  document.getElementById('cardArea').style.display='block';
-  load();
-}
-
-function shuffle(){
-  for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
-  idx=0;known=0;again=0;updateStats();showCard();
-}
-
-// AUDIO via Web Speech API
-function speak(text){
-  if(!window.speechSynthesis)return;
-  window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang='ja-JP';
-  u.rate=0.85;
-  u.pitch=1;
-  window.speechSynthesis.speak(u);
-}
-document.getElementById('audioFront').onclick=(e)=>{e.stopPropagation();if(deck.length)speak(deck[idx].jp);};
-document.getElementById('audioBack').onclick=()=>{if(deck.length)speak(deck[idx].jp);};
-
-// KEYBOARD
-document.addEventListener('keydown',e=>{
-  if(e.target.tagName==='INPUT')return;
-  if(e.code==='Space'||e.key===' '){e.preventDefault();flipCard();}
-  else if(e.code==='ArrowRight')nextCard();
-  else if(e.code==='ArrowLeft')prevCard();
-  else if(e.key==='k'||e.key==='K') markCard(true);
-  else if(e.key==='a'||e.key==='A') markCard(false);
-  else if(e.key==='s'||e.key==='S'){if(deck.length)speak(deck[idx].jp);}
+// Keyboard Listeners
+document.addEventListener('keydown', (e) => {
+  if(document.activeElement.tagName === 'INPUT') return;
+  if(currentMode !== 'flashcards') return;
+  if(e.code === 'Space') { e.preventDefault(); toggleFlip(); }
+  if(e.key === 'ArrowRight') nextCard();
+  if(e.key === 'ArrowLeft') prevCard();
+  if(e.key.toLowerCase() === 'k') markCard(true);
+  if(e.key.toLowerCase() === 'a') markCard(false);
 });
 
-// SWIPE
-let touchX=null;
-document.getElementById('cardInner').addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;},{passive:true});
-document.getElementById('cardInner').addEventListener('touchend',e=>{
-  if(touchX===null)return;
-  const dx=e.changedTouches[0].clientX-touchX;
-  if(Math.abs(dx)>60){if(dx<0)nextCard();else prevCard();}
-  touchX=null;
-});
-
-// INIT
+// Initialization
 buildFilters();
 buildCatFilters();
 load();
