@@ -29,7 +29,7 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 
 /* HEADER & NAV */
 header { text-align: center; margin-bottom: 25px; }
-header h1 { font-size: 26px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+header h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
 header p { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
 .nav-tabs { display: flex; gap: 10px; margin-bottom: 25px; justify-content: center; }
 .nav-tab { padding: 10px 20px; border-radius: 100px; background: var(--surface); color: var(--muted); text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid var(--border); transition: all 0.2s; }
@@ -131,21 +131,15 @@ header p { font-size: 12px; color: var(--muted); font-family: 'Space Mono', mono
   <!-- NAVIGATION TABS -->
   <div class="nav-tabs">
     <a href="index.html" class="nav-tab">📖 Vocabulary</a>
-    <a href="kanji.html" class="nav-tab active">🈶 Kanji</a>
   </div>
 
   <!-- TOTAL + SEARCH -->
   <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;">
     <div class="stat-card" style="min-width:140px;">
       <div class="val" id="stTotal">0</div>
-      <div class="lbl">Total Kanji</div>
+      <div class="lbl">Total</div>
     </div>
 
-    <div class="search-wrapper" style="flex:1;margin-bottom:0;">
-
-    <span class="search-icon">🔍</span>
-    <input type="text" class="search-input" id="searchBar" placeholder="Kanji, Meaning, Onyomi, Kunyomi, Romaji..." oninput="debouncedSearch()">
-  </div>
   </div>
 
   <!-- FILTERS SECTION -->
