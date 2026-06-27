@@ -49,12 +49,42 @@ header p { font-size: 12px; color: var(--muted); font-family: 'Space Mono', mono
 .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px var(--glow); }
 .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--hint); pointer-events: none; }
 
-.filter-section { background: var(--surface); border: 1px solid var(--border); padding: 14px; border-radius: 16px; margin-bottom: 25px; display: flex; flex-direction: column; gap: 12px; }
-.filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.filter-lbl { font-size: 11px; font-weight: bold; color: var(--hint); text-transform: uppercase; width: 80px; }
-.chip { padding: 5px 12px; border-radius: 100px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); font-size: 11px; cursor: pointer; font-family: inherit; transition: all 0.2s; border: 1px solid var(--border); }
-.chip:hover { border-color: var(--primary); color: var(--text); }
-.chip.active { background: var(--primary); color: #09090e; font-weight: bold; border-color: transparent; }
+/* hidden legacy */
+.filter-section, .filter-row, .filter-lbl, .chip { display: none; }
+
+/* Dropdown filter panel */
+.k-filter-panel { display: flex; gap: 10px; margin-bottom: 20px; }
+.k-dd-wrap { position: relative; flex: 1; }
+.k-dd-btn {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 11px 14px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; color: var(--text); font-family: inherit;
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.k-dd-btn:hover { border-color: var(--primary); }
+.k-dd-btn.open { border-color: var(--primary); box-shadow: 0 0 0 3px var(--glow); }
+.k-dd-val { color: var(--primary); font-weight: 700; }
+.k-dd-arrow { font-size: 10px; color: var(--hint); transition: transform 0.2s; }
+.k-dd-btn.open .k-dd-arrow { transform: rotate(180deg); }
+.k-dd-menu {
+  position: fixed; background: var(--surface2); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px; box-shadow: 0 14px 35px rgba(0,0,0,0.7);
+  z-index: 99999; opacity: 0; pointer-events: none; transform: translateY(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  max-height: 280px; overflow-y: auto; padding: 6px;
+}
+.k-dd-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.k-dm-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border-radius: 8px; cursor: pointer;
+  font-family: inherit; font-size: 13px; color: var(--muted);
+  transition: background 0.12s, color 0.12s; white-space: nowrap;
+}
+.k-dm-item:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+.k-dm-item.active { background: var(--glow); color: var(--primary); font-weight: 700; }
+.k-dm-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0; flex-shrink: 0; }
+.k-dm-item.active .k-dm-dot { opacity: 1; }
+.k-dm-sep { height: 1px; background: var(--border); margin: 4px 0; }
 
 /* MODE CONTROLLER */
 .mode-switch { display: flex; background: var(--surface); border: 1px solid var(--border); padding: 4px; border-radius: 12px; margin-bottom: 25px; }
@@ -152,26 +182,37 @@ header p { font-size: 12px; color: var(--muted); font-family: 'Space Mono', mono
     </div>
   </div>
 
-  <div class="search-wrapper">
-    <span class="search-icon">🔍</span>
-    <input type="text" class="search-input" id="searchBar" placeholder="Search by Kanji, English meaning or Bengali meaning..." oninput="handleSearch()">
+  <!-- Search -->
+  <div style="position:relative; margin-bottom:16px;">
+    <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--hint);pointer-events:none;">🔍</span>
+    <input type="text" id="searchBar"
+      placeholder="Search by Kanji, meaning or reading..."
+      style="width:100%;padding:14px 16px 14px 44px;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:inherit;font-size:14px;outline:none;box-sizing:border-box;transition:all 0.3s;"
+      onfocus="this.style.borderColor='var(--primary)';this.style.boxShadow='0 0 15px var(--glow)'"
+      onblur="this.style.borderColor='';this.style.boxShadow=''">
+  </div>
+  <div id="kanjiSearchResults" style="display:none;position:fixed;background:var(--surface2);border:1px solid rgba(255,255,255,0.12);border-radius:12px;max-height:280px;overflow-y:auto;z-index:999999;box-shadow:0 16px 40px rgba(0,0,0,0.8);min-width:260px;"></div>
+
+  <!-- Filter Dropdowns -->
+  <div class="k-filter-panel">
+    <div class="k-dd-wrap" id="jlptDdWrap">
+      <button class="k-dd-btn" id="jlptDdBtn" onclick="kToggleDd('jlpt')">
+        <span>🎯 JLPT: <span class="k-dd-val" id="jlptDdVal">All</span></span>
+        <span class="k-dd-arrow">▼</span>
+      </button>
+      <div class="k-dd-menu" id="jlptDdMenu"></div>
+    </div>
+    <div class="k-dd-wrap" id="lessonDdWrap">
+      <button class="k-dd-btn" id="lessonDdBtn" onclick="kToggleDd('lesson')">
+        <span>📚 Lesson: <span class="k-dd-val" id="lessonDdVal">All</span></span>
+        <span class="k-dd-arrow">▼</span>
+      </button>
+      <div class="k-dd-menu" id="lessonDdMenu"></div>
+    </div>
   </div>
 
-  <div class="filter-section">
-    <div class="filter-row">
-      <span class="filter-lbl">JLPT Level</span>
-      <button class="chip active" onclick="filterJLPT('all', this)">All</button>
-      <button class="chip" onclick="filterJLPT('N5', this)">N5</button>
-      <button class="chip" onclick="filterJLPT('N4', this)">N4</button>
-      <button class="chip" onclick="filterJLPT('N3', this)">N3</button>
-    </div>
-    <div class="filter-row">
-      <span class="filter-lbl">Lessons</span>
-      <div id="lessonChipsContainer" style="display:flex; gap:6px; flex-wrap:wrap;">
-        <button class="chip active" onclick="filterLesson('all', this)">All Lessons</button>
-      </div>
-    </div>
-  </div>
+  <!-- hidden legacy containers -->
+  <div style="display:none" id="lessonChipsContainer"></div>
 
   <div class="mode-switch">
     <button id="btn-flashcard" class="mode-btn active" onclick="switchMode('flashcard')">🎴 Flashcard</button>
@@ -1268,6 +1309,7 @@ let currentViewMode = 'flashcard';
 let filter_JLPT = 'all';
 let filter_Lesson = 'all';
 let searchKeyword = '';
+let kOpenDd = null; // which kanji dropdown is open
 
 let processedKanjiList = []; 
 let currentKanjiIndex = 0;   
@@ -1284,129 +1326,206 @@ let currentCorrectAnswer = "";
  * INITIALIZATION ON WINDOW LOAD
  * ----------------------------------------------------
  */
-window.addEventListener('DOMContentLoaded', () => {
-  generateLessonChips();
-  applyFiltersAndSearch();
-  updateStatsCounters();
-});
-
-/**
- * ----------------------------------------------------
- * DYNAMIC FILTER COMPONENT GENERATOR
- * ----------------------------------------------------
- */
-function generateLessonChips() {
-  const container = document.getElementById('lessonChipsContainer');
-  if(!container) return;
-
-  // Extract unique numeric lessons from database safely
-  let lessonsSet = new Set();
-  RAW_KANJI_DATABASE.forEach(item => {
-    if(item.lesson) lessonsSet.add(item.lesson.toString().trim());
-  });
-
-  // Sort logically as integers if possible
-  let sortedLessons = Array.from(lessonsSet).sort((a, b) => {
-    return parseInt(a, 10) - parseInt(b, 10);
-  });
-
-  // Keep the 'All Lessons' chip and append generated ones
-  container.innerHTML = `<button class="chip active" onclick="filterLesson('all', this)">All Lessons</button>`;
-  
-  sortedLessons.forEach(lessNum => {
-    container.innerHTML += `<button class="chip" onclick="filterLesson('${lessNum}', this)">Lesson ${lessNum}</button>`;
+// ─── Dropdown helpers ───
+function kToggleDd(which) {
+  if(kOpenDd === which) { kCloseDd(); return; }
+  kCloseDd();
+  kOpenDd = which;
+  var btn  = document.getElementById(which+'DdBtn');
+  var menu = document.getElementById(which+'DdMenu');
+  if(btn)  btn.classList.add('open');
+  if(menu) {
+    // position fixed under button
+    var r = btn.getBoundingClientRect();
+    menu.style.top   = (r.bottom + 4) + 'px';
+    menu.style.left  = r.left + 'px';
+    menu.style.width = Math.max(r.width, 180) + 'px';
+    menu.classList.add('open');
+  }
+}
+function kCloseDd() {
+  kOpenDd = null;
+  ['jlpt','lesson'].forEach(function(w){
+    var btn  = document.getElementById(w+'DdBtn');
+    var menu = document.getElementById(w+'DdMenu');
+    if(btn)  btn.classList.remove('open');
+    if(menu) menu.classList.remove('open');
   });
 }
 
-/**
- * ----------------------------------------------------
- * DATA FILTERING AND STATE COMPUTATION LOGIC
- * ----------------------------------------------------
- */
+function buildJlptDd() {
+  var menu = document.getElementById('jlptDdMenu');
+  if(!menu) return;
+  menu.innerHTML = '';
+  var opts = ['all','N5','N4','N3'];
+  var labels = {all:'All Levels', N5:'N5', N4:'N4', N3:'N3'};
+  opts.forEach(function(v) {
+    var d = document.createElement('div');
+    d.className = 'k-dm-item' + (filter_JLPT===v ? ' active' : '');
+    d.innerHTML = '<span class="k-dm-dot"></span> ' + labels[v];
+    d.onclick = function() {
+      filter_JLPT = v;
+      document.getElementById('jlptDdVal').textContent = v==='all'?'All':v;
+      buildJlptDd(); kCloseDd();
+      applyFiltersAndSearch();
+      if(currentViewMode==='quiz') startQuizSession();
+    };
+    menu.appendChild(d);
+  });
+}
+
+function buildLessonDd() {
+  var menu = document.getElementById('lessonDdMenu');
+  if(!menu) return;
+  menu.innerHTML = '';
+  var lessonsSet = new Set();
+  RAW_KANJI_DATABASE.forEach(function(item){ if(item.lesson) lessonsSet.add(item.lesson.toString().trim()); });
+  var sorted = Array.from(lessonsSet).sort(function(a,b){ return parseInt(a)-parseInt(b); });
+
+  // All item
+  var allD = document.createElement('div');
+  allD.className = 'k-dm-item' + (filter_Lesson==='all'?' active':'');
+  allD.innerHTML = '<span class="k-dm-dot"></span> All Lessons';
+  allD.onclick = function() {
+    filter_Lesson = 'all';
+    document.getElementById('lessonDdVal').textContent = 'All';
+    buildLessonDd(); kCloseDd();
+    applyFiltersAndSearch();
+    if(currentViewMode==='quiz') startQuizSession();
+  };
+  menu.appendChild(allD);
+  var sep = document.createElement('div'); sep.className='k-dm-sep'; menu.appendChild(sep);
+
+  sorted.forEach(function(l){
+    var d = document.createElement('div');
+    d.className = 'k-dm-item' + (filter_Lesson===l?' active':'');
+    d.innerHTML = '<span class="k-dm-dot"></span> Lesson ' + l;
+    d.onclick = function() {
+      filter_Lesson = l;
+      document.getElementById('lessonDdVal').textContent = 'L'+l;
+      buildLessonDd(); kCloseDd();
+      applyFiltersAndSearch();
+      if(currentViewMode==='quiz') startQuizSession();
+    };
+    menu.appendChild(d);
+  });
+}
+
+// ─── Kanji Search ───
+function initKanjiSearch() {
+  var inp = document.getElementById('searchBar');
+  var box = document.getElementById('kanjiSearchResults');
+  if(!inp||!box) return;
+
+  function posBox() {
+    var r = inp.getBoundingClientRect();
+    box.style.top   = (r.bottom + 4) + 'px';
+    box.style.left  = r.left + 'px';
+    box.style.width = r.width + 'px';
+  }
+
+  function runSearch() {
+    var q = inp.value.toLowerCase().trim();
+    searchKeyword = q;
+    applyFiltersAndSearch();
+    if(!q) { box.style.display='none'; return; }
+    var hits = processedKanjiList.slice(0,8);
+    box.innerHTML = '';
+    if(!hits.length) {
+      box.innerHTML = '<div style="padding:10px 14px;color:var(--hint);font-size:13px;">No results found.</div>';
+    } else {
+      hits.forEach(function(k){
+        var d = document.createElement('div');
+        d.style.cssText='padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:12px;';
+        d.innerHTML = '<span style="font-family:Noto Sans JP,sans-serif;font-size:26px;font-weight:700;color:var(--primary)">'+k.kanji+'</span>'
+          +'<div><div style="font-size:13px;font-weight:600;color:#fffffe;">'+k.meaning+'</div>'
+          +'<div style="font-size:11px;color:var(--hint);">L'+k.lesson+' · '+k.jlpt+'</div></div>';
+        d.onmouseover=function(){this.style.background='rgba(255,255,255,0.05)';};
+        d.onmouseout=function(){this.style.background='';};
+        d.onmousedown=function(e){
+          e.preventDefault();
+          box.style.display='none';
+          inp.value='';
+          searchKeyword='';
+          applyFiltersAndSearch();
+          // navigate flashcard to this kanji
+          var fi = processedKanjiList.findIndex(function(x){return x.kanji===k.kanji;});
+          if(fi!==-1){ currentKanjiIndex=fi; if(currentViewMode!=='flashcard') switchMode('flashcard'); else renderFlashcardItem(); }
+        };
+        box.appendChild(d);
+      });
+    }
+    posBox();
+    box.style.display='block';
+  }
+
+  inp.addEventListener('input', runSearch);
+  inp.addEventListener('keyup', runSearch);
+  inp.addEventListener('keydown',function(e){if(e.key==='Escape'){inp.value='';searchKeyword='';box.style.display='none';applyFiltersAndSearch();}});
+}
+
+// ─── Init ───
+window.addEventListener('DOMContentLoaded', function() {
+  buildJlptDd();
+  buildLessonDd();
+  applyFiltersAndSearch();
+  updateStatsCounters();
+  initKanjiSearch();
+
+  // click outside closes dropdowns + search results
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('.k-dd-wrap')) kCloseDd();
+    var inp = document.getElementById('searchBar');
+    var box = document.getElementById('kanjiSearchResults');
+    if(box && e.target !== inp) box.style.display='none';
+  });
+});
+
 function applyFiltersAndSearch() {
   searchKeyword = document.getElementById('searchBar') ? document.getElementById('searchBar').value.toLowerCase().trim() : '';
 
-  processedKanjiList = RAW_KANJI_DATABASE.filter(item => {
-    // 1. JLPT filter
+  processedKanjiList = RAW_KANJI_DATABASE.filter(function(item) {
     if (filter_JLPT !== 'all' && item.jlpt !== filter_JLPT) return false;
-    
-    // 2. Lesson filter
     if (filter_Lesson !== 'all' && item.lesson.toString().trim() !== filter_Lesson.toString().trim()) return false;
-    
-    // 3. Search text match
     if (searchKeyword !== '') {
-      const kanjiChar = (item.kanji || '').toLowerCase();
-      const meaningText = (item.meaning || '').toLowerCase();
-      const onReading = (item.on || '').toLowerCase();
-      const kunReading = (item.kun || '').toLowerCase();
-      
-      const matchFound = kanjiChar.includes(searchKeyword) || 
-                          meaningText.includes(searchKeyword) || 
-                          onReading.includes(searchKeyword) || 
-                          kunReading.includes(searchKeyword);
-      if(!matchFound) return false;
+      var k = (item.kanji||'').toLowerCase();
+      var m = (item.meaning||'').toLowerCase();
+      var o = (item.on||'').toLowerCase();
+      var u = (item.kun||'').toLowerCase();
+      if(!k.includes(searchKeyword) && !m.includes(searchKeyword) && !o.includes(searchKeyword) && !u.includes(searchKeyword)) return false;
     }
-    
     return true;
   });
 
-  // Reset index bounds tracking safely
-  if(currentKanjiIndex >= processedKanjiList.length) {
-    currentKanjiIndex = 0;
-  }
-
-  // Refresh visible active content layout state
+  if(currentKanjiIndex >= processedKanjiList.length) currentKanjiIndex = 0;
+  updateFilteredStats();
   renderActiveViewContent();
 }
 
 function updateStatsCounters() {
-  // Update header and contextual tracking displays
   document.getElementById('stTotal').innerText = RAW_KANJI_DATABASE.length;
-  
-  let n5Count = 0, n4Count = 0, n3Count = 0;
-  RAW_KANJI_DATABASE.forEach(k => {
-    if(k.jlpt === 'N5') n5Count++;
-    if(k.jlpt === 'N4') n4Count++;
-    if(k.jlpt === 'N3') n3Count++;
-  });
-
-  if(document.getElementById('stN5')) document.getElementById('stN5').innerText = n5Count;
-  if(document.getElementById('stN4')) document.getElementById('stN4').innerText = n4Count;
-  if(document.getElementById('stN3')) document.getElementById('stN3').innerText = n3Count;
+  var n5=0,n4=0,n3=0;
+  RAW_KANJI_DATABASE.forEach(function(k){ if(k.jlpt==='N5')n5++; if(k.jlpt==='N4')n4++; if(k.jlpt==='N3')n3++; });
+  if(document.getElementById('stN5')) document.getElementById('stN5').innerText=n5;
+  if(document.getElementById('stN4')) document.getElementById('stN4').innerText=n4;
+  if(document.getElementById('stN3')) document.getElementById('stN3').innerText=n3;
 }
 
-/**
- * ----------------------------------------------------
- * FILTER ACTION HANDLERS
- * ----------------------------------------------------
- */
-function filterJLPT(level, element) {
-  filter_JLPT = level;
-  
-  // Update active view styling rules inside row node context
-  const siblings = element.parentNode.querySelectorAll('.chip');
-  siblings.forEach(chip => chip.classList.remove('active'));
-  element.classList.add('active');
-
-  applyFiltersAndSearch();
-  // If user sets parameters during dynamic testing, trigger quiz reboot gracefully
-  if(currentViewMode === 'quiz') startQuizSession();
+function updateFilteredStats() {
+  var list = processedKanjiList;
+  document.getElementById('stTotal').innerText = list.length;
+  var n5=0,n4=0,n3=0;
+  list.forEach(function(k){ if(k.jlpt==='N5')n5++; if(k.jlpt==='N4')n4++; if(k.jlpt==='N3')n3++; });
+  if(document.getElementById('stN5')) document.getElementById('stN5').innerText=n5;
+  if(document.getElementById('stN4')) document.getElementById('stN4').innerText=n4;
+  if(document.getElementById('stN3')) document.getElementById('stN3').innerText=n3;
 }
 
-function filterLesson(lessonNum, element) {
-  filter_Lesson = lessonNum;
-
-  const siblings = element.parentNode.querySelectorAll('.chip');
-  siblings.forEach(chip => chip.classList.remove('active'));
-  element.classList.add('active');
-
-  applyFiltersAndSearch();
-  if(currentViewMode === 'quiz') startQuizSession();
-}
-
-function handleSearch() {
-  applyFiltersAndSearch();
-}
+// legacy stubs (keep for safety)
+function generateLessonChips() {}
+function filterJLPT(l,e) {}
+function filterLesson(l,e) {}
+function handleSearch() { applyFiltersAndSearch(); }
 
 /**
  * ----------------------------------------------------
